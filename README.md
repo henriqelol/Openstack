@@ -1,68 +1,79 @@
-#===Guia de Instalação do OpenStack=== 
+# Instalação OpenStack
+Este documento apresenta os links conforme foi implementado passo a passo a instalação do **Openstack Ironic** e **Openstack Kolla-Ansible**.
+
+## Guia de Instalação do OpenStack
+Toda documentação foi feita apartir do Guia de Instalação, a versão utilizada foi a **Queens**.
 https://docs.openstack.org/install-guide/
 
-#Acesso máquina Servidor
-ssh -X asgard@192.168.88.76
+## Máquina Servidor
+Para instalação de Openstack, foi utilizado um servidor com as seguintes  principais **Configurações**:
+### Configurações de Hardware: 
+Processador: 8 Nucleos
+Memória: 16 GB
+HD: 1TB
+### Configurações de Software:
+Sistema: Ubuntu 16.04
+Programa: VirtualBox -  Versão 5.2.20 
 
-#Ambientes criados com Ubuntu 16.04
+Toda instalação de ambiente foi através de acesso SSH -X.
 
-##Controller Node 1
+## Ambientes criados no VirtualBox
+### Controller Node 1
 Config: Memória: 10240 mb, Proc: 4 Nucleo, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.
-##Compute Node 1
+### Compute Node 1
 Config: Memória: 10240 mb, Proc: 4 Nucleo, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.
-##Block Node 1
+### Block Node 1
 Config: Memória: 10240 mb, Proc: 4 Nucleo, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.
-##Object Node 1
+### Object Node 1
 Config: Memória: 10240 mb, Proc: 4 Nucleo, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.
-##Object Node 2
+### Object Node 2
 Config: Memória: 10240 mb, Proc: 4 Nucleo, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.
 
-#Configuração de Rede do Ambiente
-##Controller Node 1
+## Configuração de Rede do Ambiente
+### Controller Node 1
 https://docs.openstack.org/install-guide/environment-networking-controller.html
-##Compute Node 1
+### Compute Node 1
 https://docs.openstack.org/install-guide/environment-networking-compute.html
-##Block Node 1, Object Node 1, Object Node 2
+### Block Node 1, Object Node 1, Object Node 2
 https://docs.openstack.org/install-guide/environment-networking-storage-cinder.html
-
-#Verificação de Connectiividade
+## Verificação de Connectiividade
 https://docs.openstack.org/install-guide/environment-networking-verify.html
 
-#Instalação e Configuração de componentes
-##Controller
+## Instalação e Configuração de componentes
+### Controller
 https://docs.openstack.org/install-guide/environment-ntp-controller.html
-
-##Outros Nós
+### Outros Nós
 https://docs.openstack.org/install-guide/environment-ntp-other.html
 
-#Instalação de Pacotes OpenStack no Ubuntu (Versão Queens).
+## Instalação de Pacotes OpenStack no Ubuntu (Versão Queens).
 https://docs.openstack.org/install-guide/environment-packages-ubuntu.html
 
-#SQL Database
+## SQL Database
 https://docs.openstack.org/install-guide/environment-sql-database-ubuntu.html
 
-#Mensagem Queue
+## Mensagem Queue
 https://docs.openstack.org/install-guide/environment-messaging-ubuntu.html
 
-#Etcd para Ubuntu
+## ETCD
 https://docs.openstack.org/install-guide/environment-etcd-ubuntu.html
 
-#Instalação de Serviços OpenStack
+## Instalação de Serviços OpenStack
 https://docs.openstack.org/install-guide/openstack-services.html#minimal-deployment-for-queens
-##Serviço de Identidade
+### Serviço de Identidade
 https://docs.openstack.org/keystone/queens/install/
-##Serviço de Image
+### Serviço de Image
 https://docs.openstack.org/glance/queens/install/
-##Serviço de Compute
+### Serviço de Compute
 https://docs.openstack.org/nova/queens/install/
-##Serviço de Networking
+### Serviço de Networking
 https://docs.openstack.org/neutron/queens/install/
-##Dashboard
+### Dashboard
 https://docs.openstack.org/horizon/queens/install/
-##Serviço de Armazenamento de Bloco
+### Serviço de Armazenamento de Bloco
 https://docs.openstack.org/cinder/queens/install/
 
 #Erros e Bugs
+(Nem eu sei o que são esses Erros e Bugs)
 https://docs.openstack.org/install-guide/environment-ntp-other.html
 https://stackoverflow.com/questions/39281594/error-1698-28000-access-denied-for-user-rootlocalhost
 https://docs.openstack.org/install-guide/environment-messaging.html
@@ -83,4 +94,3 @@ openstack --os-auth-url http://controller:5000/v3  --os-project-domain-name Defa
 
 openstack --os-auth-url http://controller:5000/v3 --os-project-domain-name Default --os-user-domain-name Default --os-project-name demo --os-username demo token issue
 https://docs.openstack.org/keystone/queens/install/keystone-users-ubuntu.html
-
