@@ -1,13 +1,11 @@
 # Instalação do OpenStack
  Este documento apresenta os links conforme foi implementado passo a passo a instalação do **Openstack Ironic** e **Openstack Kolla-Ansible**.
 
-## Guia de Instalação do OpenStack
-Toda documentação foi feita apartir do Guia de Instalação, a versão utilizada foi a  [**Queens**](https://www.openstack.org/software/queens/).  
+#### Guia de Instalação do OpenStack
+Toda documentação foi feita apartir do Guia de Instalação, a versão utilizada foi a  [**queens**](https://www.openstack.org/software/queens/).  
+Guia instalação: https://docs.openstack.org/install-guide/
 
-https://docs.openstack.org/install-guide/
-
-
-## Máquina Servidor
+### Máquina Servidor
 Para instalação de Openstack, foi utilizado um servidor com as seguintes  principais Configurações:
 **Configurações de Hardware**: 
 Processador: 8 Nucleos
