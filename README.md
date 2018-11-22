@@ -6,37 +6,25 @@ Toda documentação foi feita apartir do Guia de Instalação, a versão utiliza
 Guia instalação: https://docs.openstack.org/install-guide/
 
 ### Máquina Servidor
-Para instalação de Openstack, foi utilizado um servidor com as seguintes  principais Configurações:
-**Configurações de Hardware**: 
-Processador: 8 Nucleos
+Para instalação de Openstack, foi utilizado um servidor com as seguintes configurações:  
+**Configurações de Hardware**:  
+Processador: 8 Nucleos; Memória: 16 GB; HD: 1TB.  
+*** Configurações de Software:***  
+Sistema: Ubuntu 16.04  
 
-Memória: 16 GB
+Programas utilizados: VirtualBox - Versão 5.2.22 r126460 (Qt5.6.1).
+                      Vagrant - Versão 2.2.1                                  
 
-HD: 1TB
+*Toda instalação de ambiente foi através de acesso SSH -X*.
 
-*** Configurações de Software:***
+### Ambientes criados no VirtualBox/Vagrant
+#### Controller
+Config: Memória: 10240 mb, Proc: 4 Nucleos, HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
+#### Compute/Block
+Config: Memória: 10240 mb, Proc: 4 Nucleos, HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
 
-Sistema: Ubuntu 16.04
-
-Programa: VirtualBox -  Versão 5.2.20 
-
-Toda instalação de ambiente foi através de acesso SSH -X.
-
-## Ambientes criados no VirtualBox
-### Controller Node 1
-Config: Memória: 10240 mb, Proc: 4 Nucleo, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.
-### Compute Node 1
-Config: Memória: 10240 mb, Proc: 4 Nucleo, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.
-### Block Node 1
-Config: Memória: 10240 mb, Proc: 4 Nucleo, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.
-### Object Node 1
-Config: Memória: 10240 mb, Proc: 4 Nucleo, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.
-### Object Node 2
-Config: Memória: 10240 mb, Proc: 4 Nucleo, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.
-
-## Configuração de Rede do Ambiente
-### Controller Node 1
-https://docs.openstack.org/install-guide/environment-networking-controller.html
+### Configuração de Rede do Ambiente
+#### [Controller] (https://docs.openstack.org/install-guide/environment-networking-controller.html)
 
 Configuração de interface da máquina controller
 IP address: 10.0.0.11
@@ -65,7 +53,7 @@ iface enp0s8 inet dhcp
 :wq!
 sudo reboot
 
-### Compute Node 1
+### Compute
 https://docs.openstack.org/install-guide/environment-networking-compute.html
 
 Configuração de interface da máquina compute1
@@ -95,7 +83,7 @@ iface enp0s8 inet dhcp
 :wq!
 sudo reboot
 
-### Block Node 1, Object Node 1, Object Node 2
+### Block, Object, Object Node 2
 https://docs.openstack.org/install-guide/environment-networking-storage-cinder.html
 
 
@@ -135,7 +123,7 @@ ping -c 4 block1
 
 ## Network Time Protocol (NTP)
 ## Instalação e Configuração de componentes
-### Controller
+#### Controller
 https://docs.openstack.org/install-guide/environment-ntp-controller.html
 
 sudo apt install chrony
