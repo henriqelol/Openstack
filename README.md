@@ -3,35 +3,36 @@
 
 #### Guia de Instalação do OpenStack
 Toda documentação foi feita apartir do Guia de Instalação, a versão utilizada foi a  [**queens**](https://www.openstack.org/software/queens/).  
-Guia instalação: https://docs.openstack.org/install-guide/
+Guia instalação: https://docs.openstack.org/install-guide/  
 
 ### Máquina Servidor
 Para instalação de Openstack, foi utilizado um servidor com as seguintes configurações:  
 **Configurações de Hardware**:  
 Processador: 8 Nucleos; Memória: 16 GB; HD: 1TB.  
-*** Configurações de Software:***  
+**Configurações de Software**:  
 Sistema: Ubuntu 16.04  
 
-Programas utilizados: VirtualBox - Versão 5.2.22 r126460 (Qt5.6.1).
-                      Vagrant - Versão 2.2.1                                  
+Programas utilizados: VirtualBox - Versão 5.2.22 r126460 (Qt5.6.1).  
+                      Vagrant - Versão 2.2.1                                    
 
 *Toda instalação de ambiente foi através de acesso SSH -X*.
 
 ### Ambientes criados no VirtualBox/Vagrant
-#### Controller
+**Controller**
 Config: Memória: 10240 mb, Proc: 4 Nucleos, HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
-#### Compute/Block
+**Compute/Block**
 Config: Memória: 10240 mb, Proc: 4 Nucleos, HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
 
-### Configuração de Rede do Ambiente
-#### [Controller] (https://docs.openstack.org/install-guide/environment-networking-controller.html)
+### VirtualBox - Configuração de Rede do Ambiente
+#### [Controller](https://docs.openstack.org/install-guide/environment-networking-controller.html)
 
-Configuração de interface da máquina controller
-IP address: 10.0.0.11
-Network mask: 255.255.255.0 (or /24)
-Default gateway: 10.0.0.1
+Configuração de interface da *máquina controller*.  
+        IP address: 10.0.0.11  
+        Network mask: 255.255.255.0 (or /24)  
+        Default gateway: 10.0.0.1  
 
-/etc/network/interfaces
+Configure a interface de rede editando o arquivo `/etc/network/interfaces`
+~~~
 auto enp0s3
 iface enp0s3 inet manual
 	up ifconfig $IFACE 10.0.0.11 up
@@ -41,27 +42,28 @@ iface enp0s3 inet manual
 
 auto enp0s8
 iface enp0s8 inet dhcp
-
-/etc/hosts
-#Comente 127.0.1.1
+~~~
+Edite o arquivo `/etc/hosts`
+~~~
+127.0.0.1       localhost
+#127.0.1.1       controller
 # controller
 10.0.0.11       controller
 # compute1
 10.0.0.31       compute1
 # block1
 10.0.0.41       block1
-:wq!
-sudo reboot
+~~~
 
-### Compute
-https://docs.openstack.org/install-guide/environment-networking-compute.html
+#### [Compute](https://docs.openstack.org/install-guide/environment-networking-compute.html)
 
-Configuração de interface da máquina compute1
-IP address: 10.0.0.31
-Network mask: 255.255.255.0 (or /24)
-Default gateway: 10.0.0.1
+Configuração de interface da *máquina compute* 
+        IP address: 10.0.0.31
+        Network mask: 255.255.255.0 (or /24)
+        Default gateway: 10.0.0.1
 
-/etc/network/interfaces
+Configure a interface de rede editando o arquivo `/etc/network/interfaces`
+~~~
 auto enp0s3
 iface enp0s3 inet manual
 	up ifconfig $IFACE 10.0.0.31 up
@@ -71,50 +73,26 @@ iface enp0s3 inet manual
 
 auto enp0s8
 iface enp0s8 inet dhcp
+~~~
 
-/etc/hosts
-#Comente 127.0.1.1
+Edite o arquivo `/etc/hosts`
+~~~
+127.0.0.1       localhost
+#127.0.1.1       compute
 # controller
 10.0.0.11       controller
 # compute1
 10.0.0.31       compute1
 # block1
 10.0.0.41       block1
-:wq!
-sudo reboot
+~~~
 
-### Block, Object, Object Node 2
-https://docs.openstack.org/install-guide/environment-networking-storage-cinder.html
+### [Block](https://docs.openstack.org/install-guide/environment-networking-storage-cinder.html)
 
+Configuração de interface da máquina **Block**  
+*Mesmos passos anteriores, alterando apenas o valor final do endereço IP para o valor 41* 
 
-Configuração de interface da máquina controller
-IP address: 10.0.0.41
-Network mask: 255.255.255.0 (or /24)
-Default gateway: 10.0.0.1
-
-/etc/network/interfaces
-auto enp0s3
-iface enp0s3 inet manual
-	up ifconfig $IFACE 10.0.0.41 up
-        up ip link set $IFACE promisc on
-        down ip link set $IFACE promisc off
-        down ifconfig $IFACE down
-
-auto enp0s8
-iface enp0s8 inet dhcp
-
-/etc/hosts
-#Comente 127.0.1.1
-# controller
-10.0.0.11       controller
-# compute1
-10.0.0.31       compute1
-# block1
-10.0.0.41       block1
-:wq!
-sudo reboot
-
-## Verificação de Connectiividade
+### Verificação de Connectiividade
 https://docs.openstack.org/install-guide/environment-networking-verify.html
 ping -c 4 controller
 ping -c 4 compute1
