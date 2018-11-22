@@ -31,7 +31,8 @@ echo "export OS_USER_DOMAIN_NAME=Default" >> /etc/profile
 echo "export OS_PROJECT_DOMAIN_NAME=Default" >> /etc/profile
 echo "export OS_AUTH_URL=http://localhost:5000/v3" >> /etc/profile
 echo "export OS_IDENTITY_API_VERSION=3" >> /etc/profile
-exit
+reboot
+printenv | grep OS
 #ssh -l root -p 2222 localhost
 openstack domain create --description "An Example Domain" example
 openstack project create --domain default --description "Service Project" service
@@ -105,6 +106,7 @@ sed -i '/^\[placement\]/a os_region_name = RegionOne \nproject_domain_name = Def
 /bin/sh -c "nova-manage api_db sync" nova
 /bin/sh -c "nova-manage cell_v2 map_cell0" nova
 apt -y install rabbitmq-server
+
 systemctl enable rabbitmq-server.service
 systemctl start rabbitmq-server.service
 rabbitmqctl add_user openstack senhaDaVMdoMato
@@ -121,9 +123,10 @@ service nova-novncproxy restart
 
 apt -y install nova-compute
 sed -i '/^\[vnc\]/a novncproxy\_base\_url\ \=\ http\:\/\/localhost\:6080\/vnc\_auto\.html' /etc/nova/nova.conf
-[DEFAULT]
-#log_dir = /var/log/nova
+
+sed -i 's/log_dir/#log_dir/' /etc/nova/nova.conf
 egrep -c '(vmx|svm)' /proc/cpuinfo
+
 if [ $(egrep -c '(vmx|svm)' /proc/cpuinfo) -eq 0 ]; then sed -i 's/virt_type\=kvm/virt_type\=qemu/g' /etc/nova/nova-compute.conf; fi
 service nova-compute restart
 
@@ -147,22 +150,17 @@ mysql -u root -psenhaDaVMdoMato
 CREATE DATABASE neutron;
 GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY 'senhaDaVMdoMato';
 GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY 'senhaDaVMdoMato';
+exit;
 
 . admin-openrc
 
-openstack user create --domain default --password-prompt neutron
+#openstack user create --domain default --password-prompt neutron
 openstack role add --project service --user neutron admin
 openstack service create --name neutron --description "OpenStack Networking" network
-
 openstack endpoint create --region RegionOne network public http://controller:9696
-
 openstack endpoint create --region RegionOne network internal http://controller:9696
-
 openstack endpoint create --region RegionOne network admin http://controller:9696
-
-apt install neutron-server neutron-plugin-ml2 \
-  neutron-linuxbridge-agent neutron-dhcp-agent \
-  neutron-metadata-agent
+apt install neutron-server neutron-plugin-ml2 neutron-linuxbridge-agent neutron-dhcp-agent neutron-metadata-agent
 
 /etc/neutron/neutron.conf
 [database]
@@ -176,7 +174,7 @@ transport_url = rabbit://openstack:RABBIT_PASS@controller
 
 [DEFAULT]
 # ...
-auth_strategy = keystone
+auth_strategy = keystonekrak
 
 [keystone_authtoken]
 # ...
@@ -454,8 +452,7 @@ openstack service create --name neutron --description "OpenStack Networking" net
 openstack endpoint create --region RegionOne network public http://localhost:9696
 openstack endpoint create --region RegionOne network internal http://localhost:9696
 openstack endpoint create --region RegionOne network admin http://localhost:9696
-apt -y install neutron-server neutron-plugin-ml2 neutron-linuxbridge-agent neutron-dhcp-agent neutron-metadata-agent
-
+apt -y install neutron-server neutron-plugin-ml2 neutron-linuxbridge-agent neutron-dhcp-agent neutron-metadata-agent;
 sed -i 's/sqlite:\/\/\/\/var\/lib\/neutron\/neutron.sqlite/mysql+pymysql://neutron:senhaDaVMdoMato@localhost/neutron/' /etc/neutron/neutron.conf
 
 linhadefaultneutron=`sudo awk '{if ($0 == "[DEFAULT]") {print NR;}}' /etc/neutron/neutron.conf`
@@ -547,3 +544,5 @@ service neutron-metadata-agent restart
 ----------Finalizando a Instalação Ironic----------
 ===================================================
 https://docs.openstack.org/ironic/queens/install/install-ubuntu.html
+
+https://docs.openstack.org/ironic/queens/install/configure-integration.html
