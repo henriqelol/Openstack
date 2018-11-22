@@ -39,8 +39,8 @@ rm -rf /opt/vagrant
 rm -f /usr/bin/vagrant
 
 ### Download e instalação do Vagrant
-wget https://releases.hashicorp.com/vagrant/2.2.0/vagrant_2.2.0_x86_64.deb
-sudo dpkg -i vagrant_2.2.0_x86_64.deb 
+wget https://releases.hashicorp.com/vagrant/2.2.1/vagrant_2.2.1_x86_64.deb
+sudo dpkg -i vagrant_2.2.1_x86_64.deb
 vagrant -v
 which vagrant
 
@@ -88,3 +88,54 @@ vagrant reload nome_da_vm
 
 Destruir todas VMs
 for i in `vagrant global-status | grep virtualbox | awk '{ print $1 }'` ; do vagrant destroy $i ; done
+
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+ENV["LC_ALL"] = "en_US.UTF-8"
+
+Vagrant.configure("2") do |config|
+  
+  ############### start controller ###############
+    config.vm.define "controller" do |controller|
+      controller.vm.box = "ubuntu/xenial64"
+      controller.vm.hostname = 'controller'
+      controller.vm.network "private_network", ip: "10.0.0.11"
+      controller.vm.network "public_network"
+
+      controller.vm.provider "virtualbox" do |vb|
+        vb.memory = "10240"
+        vb.cpus = "4"
+      end
+    end
+  ############### end controller ###############
+
+  ############### start compute ###############
+    config.vm.define "compute" do |compute|
+      compute.vm.box = "ubuntu/xenial64"
+      compute.vm.hostname = 'compute'
+      compute.vm.network "private_network", ip: "10.0.0.31"
+      compute.vm.network "public_network"
+
+      compute.vm.provider "virtualbox" do |vb|
+        vb.memory = "10240"
+        vb.cpus = "4"
+      end
+    end
+  ############### end compute ###############
+
+  ############### start block ###############
+    config.vm.define "block" do |block|
+      block.vm.box = "ubuntu/xenial64"
+      block.vm.hostname = 'block'
+      block.vm.network "private_network", ip: "10.0.0.42"
+      block.vm.network "public_network"
+
+      block.vm.provider "virtualbox" do |vb|
+        vb.memory = "10240"
+        vb.cpus = "4"
+      end
+    end
+  ############### end block ###############
+
+end
