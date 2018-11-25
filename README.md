@@ -18,12 +18,14 @@ Programas utilizados: VirtualBox - Versão 5.2.22 r126460 (Qt5.6.1).
 *Toda instalação de ambiente foi através de acesso SSH -X*.
 
 ### [Ambientes criados no VirtualBox/Vagrant](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md)
+Para ambos situações de criações de VMs, utilizando o [**VAGRANT**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md) ou o [**VIRTUALBOX**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md), basta acessar o link e seguir os passos apresentados:
+
 **Controller**
 Config: Memória: 10240 mb, Proc: 4 Nucleos, HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
 **Compute/Block**
 Config: Memória: 10240 mb, Proc: 4 Nucleos, HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
 
-### VirtualBox - Configuração de Rede do Ambiente
+### Configuração de Rede do Ambiente
 #### [Controller](https://docs.openstack.org/install-guide/environment-networking-controller.html)
 
 Configuração de interface da *máquina controller*.  
@@ -103,7 +105,7 @@ ping -c 4 block1
 ### Instalação e Configuração de componentes
 #### [Controller](https://docs.openstack.org/install-guide/environment-ntp-controller.html)
 ~~~
-sudo apt install chrony  
+apt install chrony  
 
 /etc/chrony/chrony.conf   
 server NTP_SERVER iburst  
@@ -145,13 +147,13 @@ apt install python-openstackclient
 ## [SQL Database](https://docs.openstack.org/install-guide/environment-sql-database-ubuntu.html)
 A documentação do **Openstack Queens**, apresenta e utiliza o banco de dados MariaDB, porém para estudo foi utilizado o Mysql.  
 Execute os comandos que desejar (MariaDB ou Mysql) no **Controller**. 
-#### mariadb
+#### Mariadb
 ~~~
 apt install mariadb-server python-pymysql
 ~~~
 Crie e edite o arquivo /etc/mysql/mariadb.conf.d/99-openstack.cnf  
 ~~~
-sudo vim /etc/mysql/mariadb.conf.d/99-openstack.cnf
+vim /etc/mysql/mariadb.conf.d/99-openstack.cnf
 ~~~
 ~~~ 
 [mysqld]
@@ -190,7 +192,10 @@ Execute os comandos no **Controller**.
 ~~~
 apt install memcached python-memcache
 ~~~
-Edite o arquivo /etc/memcached.conf  
+Edite o arquivo /etc/memcached.conf
+~~~
+vim /etc/memcached.conf
+~~~  
 ~~~
 -l 10.0.0.11
 ~~~
@@ -222,7 +227,7 @@ systemctl enable etcd
 systemctl start etcd
 ~~~
 
-## Instalação de Serviços OpenStack
+## Instalação de Serviços OpenStack]
 https://docs.openstack.org/install-guide/openstack-services.html#minimal-deployment-for-queens
 ### Serviço de Identidade
 https://docs.openstack.org/keystone/queens/install/
