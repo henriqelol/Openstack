@@ -90,7 +90,7 @@ Edite o arquivo `/etc/hosts`
 #### [Block](https://docs.openstack.org/install-guide/environment-networking-storage-cinder.html)
 
 Configuração de interface da máquina **Block**  
-*Mesmos passos anteriores, alterando apenas o valor final do endereço IP para o valor 41* 
+>>*Mesmos passos anteriores, alterando apenas o valor final do endereço IP para o valor 41* 
 
 ### [Verificação de Connectiividade](https://docs.openstack.org/install-guide/environment-networking-verify.html)
 ~~~
@@ -99,7 +99,7 @@ ping -c 4 compute1
 ping -c 4 block1  
 ~~~
 
-## Network Time Protocol (NTP)
+## [Network Time Protocol (NTP)](https://docs.openstack.org/install-guide/environment-ntp.html)
 ### Instalação e Configuração de componentes
 #### [Controller](https://docs.openstack.org/install-guide/environment-ntp-controller.html)
 ~~~
@@ -122,47 +122,90 @@ apt install chrony
 server controller iburst
 service chrony restart
 ~~~
+>>Comente a linha  pool 2.debian.pool.ntp.org offline iburst  
 
-#Comente a linha  pool 2.debian.pool.ntp.org offline iburst
+#### Verificando Operação
+Execute em todas máquinas o comando
+~~~
+chronyc sources  
+~~~
 
-##Verificando Operação
-#Execute em todos o comando
-chronyc sources
+## [Instalação de Pacotes OpenStack no Ubuntu (Versão Queens)](https://docs.openstack.org/install-guide/environment-packages-ubuntu.html)
+OpenStack Queens for Ubuntu 16.04 LTS:  
+~~~
+echo Y|apt install software-properties-common  
+add-apt-repository cloud-archive:queens  
+~~~
+Finalize a instalação  
+~~~
+apt update && apt dist-upgrade  
+apt install python-openstackclient  
+~~~
 
-## Instalação de Pacotes OpenStack no Ubuntu (Versão Queens).
-https://docs.openstack.org/install-guide/environment-packages-ubuntu.html
-echo Y|apt install software-properties-common
-add-apt-repository cloud-archive:queens
+## [SQL Database](https://docs.openstack.org/install-guide/environment-sql-database-ubuntu.html)
+A documentação do **Openstack Queens**, apresenta e utiliza o banco de dados MariaDB, porém para estudo foi utilizado o Mysql.  
+Execute os comandos que desejar (MariaDB ou Mysql) no **Controller**. 
+#### mariadb
+~~~
+apt install mariadb-server python-pymysql
+~~~
+Crie e edite o arquivo /etc/mysql/mariadb.conf.d/99-openstack.cnf  
+~~~
+sudo vim /etc/mysql/mariadb.conf.d/99-openstack.cnf
+~~~
+~~~ 
+[mysqld]
+bind-address = 10.0.0.11
 
-apt update && apt dist-upgrade
-apt install python-openstackclient
-
-## SQL Database
-https://docs.openstack.org/install-guide/environment-sql-database-ubuntu.html
-#Foi utilizado o mysql-server no lugar o mariadb-server
-echo Y|apt-get install mysql-server python-pymysql
+default-storage-engine = innodb
+innodb_file_per_table = on
+max_connections = 4096
+collation-server = utf8_general_ci
+character-set-server = utf8
+~~~
+Finalize a instalação.  
+~~~
 service mysql restart
+mysql_secure_installation
+~~~
 
-## Mensagem Queue
-https://docs.openstack.org/install-guide/environment-messaging-ubuntu.html
+#### Mysql
+~~~
+apt-get install mysql-server python-pymysql
+service mysql restart
+~~~
+
+## [Mensagem Queue](https://docs.openstack.org/install-guide/environment-messaging-ubuntu.html)
+Execute os comandos no **Controller**.  
+~~~
 apt install rabbitmq-server
 systemctl enable rabbitmq-server.service
 systemctl start rabbitmq-server.service
-rabbitmqctl add_user openstack senhaDaVMdoMato
+rabbitmqctl add_user openstack RABBIT_PASS
 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
+~~~
 
-## Memcached
+## [Memcached](https://docs.openstack.org/install-guide/environment-memcached.html)
+Execute os comandos no **Controller**.  
+~~~
 apt install memcached python-memcache
-/etc/memcached.conf
+~~~
+Edite o arquivo /etc/memcached.conf  
+~~~
 -l 10.0.0.11
-#Altere a linha -l 127.0.0.1.
-:wq!
+~~~
+Altere a linha que possue o comando *-l 127.0.0.1*  
+Restarte o serviço.  
+~~~
 service memcached restart
+~~~
 
-## ETCD
-https://docs.openstack.org/install-guide/environment-etcd-ubuntu.html
+## [ETCD](https://docs.openstack.org/install-guide/environment-etcd-ubuntu.html)
+~~~
 apt install etcd
-/etc/default/etcd
+~~~
+Edite o arquivo /etc/default/etcd  
+~~~
 ETCD_NAME="controller"
 ETCD_DATA_DIR="/var/lib/etcd"
 ETCD_INITIAL_CLUSTER_STATE="new"
@@ -172,9 +215,12 @@ ETCD_INITIAL_ADVERTISE_PEER_URLS="http://10.0.0.11:2380"
 ETCD_ADVERTISE_CLIENT_URLS="http://10.0.0.11:2379"
 ETCD_LISTEN_PEER_URLS="http://0.0.0.0:2380"
 ETCD_LISTEN_CLIENT_URLS="http://10.0.0.11:2379"
-:wq!
+~~~
+Ative o serviço ETCD  
+~~~
 systemctl enable etcd
 systemctl start etcd
+~~~
 
 ## Instalação de Serviços OpenStack
 https://docs.openstack.org/install-guide/openstack-services.html#minimal-deployment-for-queens
