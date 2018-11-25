@@ -17,7 +17,7 @@ Programas utilizados: VirtualBox - Versão 5.2.22 r126460 (Qt5.6.1).
 
 *Toda instalação de ambiente foi através de acesso SSH -X*.
 
-### Ambientes criados no VirtualBox/Vagrant
+### [Ambientes criados no VirtualBox/Vagrant](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md)
 **Controller**
 Config: Memória: 10240 mb, Proc: 4 Nucleos, HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
 **Compute/Block**
@@ -87,39 +87,43 @@ Edite o arquivo `/etc/hosts`
 10.0.0.41       block1
 ~~~
 
-### [Block](https://docs.openstack.org/install-guide/environment-networking-storage-cinder.html)
+#### [Block](https://docs.openstack.org/install-guide/environment-networking-storage-cinder.html)
 
 Configuração de interface da máquina **Block**  
 *Mesmos passos anteriores, alterando apenas o valor final do endereço IP para o valor 41* 
 
-### Verificação de Connectiividade
-https://docs.openstack.org/install-guide/environment-networking-verify.html
-ping -c 4 controller
-ping -c 4 compute1
-ping -c 4 block1
-
+### [Verificação de Connectiividade](https://docs.openstack.org/install-guide/environment-networking-verify.html)
+~~~
+ping -c 4 controller  
+ping -c 4 compute1  
+ping -c 4 block1  
+~~~
 
 ## Network Time Protocol (NTP)
-## Instalação e Configuração de componentes
-#### Controller
-https://docs.openstack.org/install-guide/environment-ntp-controller.html
+### Instalação e Configuração de componentes
+#### [Controller](https://docs.openstack.org/install-guide/environment-ntp-controller.html)
+~~~
+sudo apt install chrony  
 
-sudo apt install chrony
-/etc/chrony/chrony.conf
-server NTP_SERVER iburst
->> colocar endereço de NTP_SERVER válido 
+/etc/chrony/chrony.conf   
+server NTP_SERVER iburst  
 allow 10.0.0.0/24
-:wq!
+~~~
+>> colocar endereço de NTP_SERVER válido  
+~~~
 service chrony restart
+~~~
 
-### Outros Nós
-https://docs.openstack.org/install-guide/environment-ntp-other.html
+#### [Outros Nós](https://docs.openstack.org/install-guide/environment-ntp-other.html)
+~~~
 apt install chrony
+
 /etc/chrony/chrony.conf
 server controller iburst
-#Comente a linha  pool 2.debian.pool.ntp.org offline iburst
-:wq!
 service chrony restart
+~~~
+
+#Comente a linha  pool 2.debian.pool.ntp.org offline iburst
 
 ##Verificando Operação
 #Execute em todos o comando
