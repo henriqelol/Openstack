@@ -26,7 +26,7 @@ Config: Memória: 10240 mb, Proc: 4 Nucleos, HD: 40GB, Placa de Rede 1: host-onl
 ### VirtualBox - Configuração de Rede do Ambiente
 #### [Controller](https://docs.openstack.org/install-guide/environment-networking-controller.html)
 
-Configuração de interface da *máquina controller*.  
+Configuração de interface da *máquina controller*. 
         IP address: 10.0.0.11  
         Network mask: 255.255.255.0 (or /24)  
         Default gateway: 10.0.0.1  
