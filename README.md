@@ -300,14 +300,14 @@ systemctl start etcd
 
 ### [Instalação de Serviços OpenStack](https://docs.openstack.org/install-guide/openstack-services.html)
 No mínimo, você precisa instalar os seguintes serviços. Instale os serviços na ordem especificada abaixo:  
-* Serviço de Identidade - instalação do **keystone**.  
-* Serviço de Imagem - instalação do **glance**   
-* Serviço de Computação - instalação do **nova**   
-* Serviço de Rede - instalação de **neutron**  
+* Serviço de Identidade - instalação do **Keystone**.  
+* Serviço de Imagem - instalação do **Glance**   
+* Serviço de Computação - instalação do **Nova**   
+* Serviço de Rede - instalação de **Neutron**  
 
 Aconselhamos também instalar os seguintes componentes depois de instalar os serviços de implantação mínimos: 
-* Dashboard - instalação do **horizon**  
-* Serviço de armazenamento em bloco - instalação do **cinder**
+* Dashboard - instalação do **Horizon**  
+* Serviço de armazenamento em bloco - instalação do **Cinder**
 
 ### [Serviço de Identidade](https://docs.openstack.org/keystone/queens/install/)
 >>*Execute os comandos no* **Controller**  
@@ -382,8 +382,10 @@ export OS_AUTH_URL=http://controller:5000/v3
 export OS_IDENTITY_API_VERSION=3
 ~~~
 
-### [Criando domínio, projeto, usuário e papéis](https://docs.openstack.org/keystone/queens/install/keystone-users-ubuntu.html)
+### [Criando domain, projects, users, e roles](https://docs.openstack.org/keystone/queens/install/keystone-users-ubuntu.html)
 >>Execute os comandos abaixo no **controller**.  
+
+1. Execute os comandos para criar um dominio, um projeto de serviço, um usuário:
 ~~~
 openstack domain create --description "An Example Domain" example
 openstack project create --domain default --description "Service Project" service
@@ -392,12 +394,15 @@ openstack user create --domain default --password senha demo
 openstack role create user
 openstack role add --project demo --user demo user
 ~~~
+>>*Você pode repetir este procedimento para criar projetos e usuários adicionais.*
 
-#### Verificando as operações
+#### [Verificando as operações](https://docs.openstack.org/keystone/queens/install/keystone-verify-ubuntu.html)
+1. Desative as variáveis temporárias:
 ~~~
 unset OS_AUTH_URL OS_PASSWORD
 ~~~
 
+2. Execute os seguintes comandos
 ~~~
 openstack --os-auth-url http://controller:5000/v3 \
   --os-project-domain-name Default --os-user-domain-name Default \
@@ -410,13 +415,14 @@ openstack --os-auth-url http://controller:5000/v3 \
   --os-project-name demo --os-username demo token issue
 ~~~
 
-#### Criando scripts do ambiente do cliente Openstack
-Criando os arquivos `admin-openrc` e `demon-openrc`.
+#### [Criando scripts do ambiente do cliente Openstack](https://docs.openstack.org/keystone/queens/install/keystone-openrc-ubuntu.html)
+1. Criando os arquivos `admin-openrc` e `demon-openrc`.
+
+2. Crie e edite o admin-openrc
 ~~~
 vim admin-openrc
 ~~~
 
-Edite o arquivo admin-openrc
 ~~~
 export OS_PROJECT_DOMAIN_NAME=Default
 export OS_USER_DOMAIN_NAME=Default
@@ -428,11 +434,11 @@ export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 ~~~
 
+3. Crie e edite o demon-openrc
 ~~~
 vim demon-openrc
 ~~~
 
-Edite o arquivo demon-openrc
 ~~~
 export OS_PROJECT_DOMAIN_NAME=Default
 export OS_USER_DOMAIN_NAME=Default
@@ -444,28 +450,32 @@ export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 ~~~
 
-Utilizando os scripts 
+#### Utilizando os scripts 
+1. Carregue os scripts
 ~~~
 . admin-openrc
 . demon-openrc
 ~~~
 
+2. Solicite um token de autenticação
 ~~~
 openstack token issue
 ~~~
 
-## [Serviço de Image](https://docs.openstack.org/glance/queens/install/)
-#### Instalação e Configuração
+### [Serviço de Image](https://docs.openstack.org/glance/queens/install/)
+#### [Instalação e configuração](https://docs.openstack.org/glance/queens/install/install-ubuntu.html)
 >>Execute os comandos abaixo no **controller**  
+
+1. Para criar o banco de dados, conclua estas etapas:
 ~~~
 mysql -u root -psenha
 CREATE DATABASE glance;
-GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'localhost' IDENTIFIED BY 'GLANCE_DBPASS';
-GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' IDENTIFIED BY 'GLANCE_DBPASS';
+GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'localhost' IDENTIFIED BY 'senha';
+GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' IDENTIFIED BY 'senha';
 exit;
 ~~~
 
-Crie as credenciais de Glance com os comandos abaixos
+2. Crie as credenciais de Glance com os comandos abaixos
 ~~~
 openstack user create --domain default --password senha glance
 openstack role add --project service --user glance admin
@@ -475,15 +485,16 @@ openstack endpoint create --region RegionOne image internal http://localhost:929
 openstack endpoint create --region RegionOne image admin http://localhost:9292
 ~~~
 
-### [Instale e configure os componentes](https://docs.openstack.org/glance/queens/install/install-ubuntu.html)
+#### Instale e configure os componentes
+1. Instale o pacote:
 ~~~
 apt install glance
 ~~~
 
-Edite o arquivo `/etc/glance/glance-api.conf`  
+2. Edite o arquivo `/etc/glance/glance-api.conf`  
 ~~~
 [database]
-connection = mysql+pymysql://glance:GLANCE_DBPASS@controller/glance
+connection = mysql+pymysql://glance:senha@controller/glance
 
 [keystone_authtoken]
 auth_uri = http://controller:5000
@@ -506,10 +517,10 @@ filesystem_store_datadir = /var/lib/glance/images/
 ~~~
 >>*Comente ou remova demais opções da seção* `[keystone_authtoken]`  
 
-Edite o arquivo `/etc/glance/glance-registry.conf`   
+3. Edite o arquivo `/etc/glance/glance-registry.conf`   
 ~~~
 [database]
-connection = mysql+pymysql://glance:GLANCE_DBPASS@controller/glance
+connection = mysql+pymysql://glance:senha@controller/glance
 
 [keystone_authtoken]
 auth_uri = http://controller:5000
@@ -526,36 +537,40 @@ password = senha
 flavor = keystone
 ~~~
 
-Execute o comando
+4. Preencha o banco de dados do serviço de imagem:
 ~~~
 su -s /bin/sh -c "glance-manage db_sync" glance
 ~~~
+>>*Ignore todas as mensagens de reprovação nesta saída.*  
 
-Finalize a instalação
+#### Finalize a instalação
+1. Reinicie os serviços de imagem:  
 ~~~
 service glance-registry restart
 service glance-api restart
 ~~~
 
 ####  [Verificando Operação](https://docs.openstack.org/glance/queens/install/verify.html)
-Download da imagem [CirrOs](http://launchpad.net/cirros)
+1. Download da imagem [CirrOs](http://launchpad.net/cirros)
 ~~~
 wget http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
 ~~~
 
-Upload da imagem  
+2. Upload da imagem  
 ~~~
 openstack image create "cirros" --file cirros-0.4.0-x86_64-disk.img --disk-format qcow2 --container-format bare --public
 ~~~
 
-Confirmação do Upload da imagem  
+3. Confirmação do Upload da imagem  
 ~~~
 openstack image list
 ~~~
 
-## [Serviço de Compute](https://docs.openstack.org/nova/queens/install/)
-#### Instalação e configurações
->>Execute os comandos abaixo no **controller**  
+### [Serviço de Compute](https://docs.openstack.org/nova/queens/install/)
+#### [Instalação e configuração do controller](https://docs.openstack.org/nova/queens/install/controller-install-ubuntu.html)
+>>Execute os comandos abaixo no **controller**.  
+
+1. Para criar os bancos de dados, conclua estas etapas:
 ~~~
 mysql -u root -psenha
 CREATE DATABASE nova_api;
@@ -571,6 +586,7 @@ GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'%' IDENTIFIED BY 'senha';
 exit;
 ~~~
 
+3. Crie as credenciais de serviço de computação:
 ~~~
 openstack user create --domain default --password senha nova
 openstack role add --project service --user nova admin
@@ -586,18 +602,19 @@ openstack endpoint create --region RegionOne placement internal http://localhost
 openstack endpoint create --region RegionOne placement admin http://localhost:8778
 ~~~
 
-#### Instale e configure componentes
+#### Instalação e configuração dos componentes
+1. Instale os pacotes:
 ~~~
 apt -y install nova-api nova-conductor nova-consoleauth nova-novncproxy nova-scheduler nova-placement-api
 ~~~
 
-Edite o arquivo `/etc/nova/nova.conf` 
+2. Edite o arquivo `/etc/nova/nova.conf` 
 ~~~
 [api_database]
-connection = mysql+pymysql://nova:NOVA_DBPASS@controller/nova_api
+connection = mysql+pymysql://nova:senha@controller/nova_api
 
 [database]
-connection = mysql+pymysql://nova:NOVA_DBPASS@controller/nova
+connection = mysql+pymysql://nova:senha@controller/nova
 
 [DEFAULT]
 transport_url = rabbit://openstack:senha@controller
@@ -639,9 +656,9 @@ auth_url = http://controller:5000/v3
 username = placement
 password = senha
 ~~~
->>*Comente ou remova demais opções da seção* `[keystone_authtoken]`   
+>>*Comente ou remova demais opções da seção* `[keystone_authtoken]`.  
 
-Execute os comandos
+3. Execute os comandos:
 ~~~
 su -s /bin/sh -c "nova-manage api_db sync" nova
 su -s /bin/sh -c "nova-manage cell_v2 map_cell0" nova
@@ -650,7 +667,7 @@ su -s /bin/sh -c "nova-manage db sync" nova
 nova-manage cell_v2 list_cells
 ~~~
 
-Finalize a instalação 
+4. Finalize a instalação, restarte os serviços: 
 ~~~
 service nova-api restart
 service nova-consoleauth restart
@@ -659,17 +676,15 @@ service nova-conductor restart
 service nova-novncproxy restart
 ~~~
  
-#### Instale e configure os componentes
+#### [Instalação e configuração do compute](https://docs.openstack.org/nova/queens/install/compute-install.html)
 >>Execute os comandos abaixo no **compute**.
+
+1. Instale os pacotes:
 ~~~
 apt install nova-compute
 ~~~
 
-Edite o arquivo `etc/nova/nova.conf`
-~~~
-vim etc/nova/nova.conf
-~~~
-
+2. Edite o arquivo `etc/nova/nova.conf`
 ~~~
 [DEFAULT]
 transport_url = rabbit://openstack:senha@controller
@@ -715,22 +730,18 @@ password = senha
 >>*Comente ou remova demais opções da seção* `[keystone_authtoken]`  
 >>*Remova a opção* **log_dir** *da seção* `[DEFAULT]`  
 
-Finalize a instalação
+3. Finalize a instalação
 ~~~
 egrep -c '(vmx|svm)' /proc/cpuinfo
 ~~~
 
-Edite o arquivo `/etc/nova/nova-compute.conf`
-~~~
-vim /etc/nova/nova-compute.conf
-~~~
-
+4. Edite o arquivo `/etc/nova/nova-compute.conf`
 ~~~
 [libvirt]
 virt_type = qemu
 ~~~
 
-Restarte o serviço
+5. Restarte o serviço
 ~~~
 service nova-compute restart
 ~~~
@@ -741,8 +752,14 @@ service nova-compute restart
 openstack compute service list --service nova-compute
 su -s /bin/sh -c "nova-manage cell_v2 discover_hosts --verbose" nova
 ~~~
+>>Alternativamente, você pode definir um intervalo apropriado em: /etc/nova/nova.conf:
+~~~
+[scheduler]
+discover_hosts_in_cells_interval = 300
+~~~
 
 #### Verificando Operação
+1. Execute os comandos abaixo para listar:
 ~~~
 openstack compute service list
 openstack catalog list
@@ -750,8 +767,10 @@ openstack image list
 nova-status upgrade check
 ~~~
 
-## [Serviço de Networking](https://docs.openstack.org/neutron/queens/install/)
-#### Instalação e Configuração
+### [Serviço de Networking](https://docs.openstack.org/neutron/queens/install/)
+#### [Instalação e configuração do controller](https://docs.openstack.org/neutron/queens/install/controller-install-obs.html)
+
+1. Para criar o banco de dados, conclua estas etapas:
 ~~~
 mysql -u root -psenha
 CREATE DATABASE neutron;
@@ -760,6 +779,7 @@ GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY 'senha';
 exit;
 ~~~
 
+2. Para criar as credenciais de serviço, conclua estas etapas:
 ~~~
 openstack user create --domain default --password-prompt neutron
 openstack role add --project service --user neutron admin
@@ -769,26 +789,27 @@ openstack endpoint create --region RegionOne network internal http://controller:
 openstack endpoint create --region RegionOne network admin http://controller:9696
 ~~~
 
-#### Configurar opções de Redes
+#### Configurar opções de Redes - Controller
 Para configuração de rede existe duas opções que permites configurar para serviços específicos:   
-- Rede 1: Redes de Provedores
-- Rede 2: Redes de Autoatendimento
+- [Rede 1: Redes de Provedores](https://docs.openstack.org/neutron/queens/install/controller-install-option1-ubuntu.html)
+- [Rede 2: Redes de Autoatendimento](https://docs.openstack.org/neutron/queens/install/controller-install-option2-ubuntu.html)
 
-### Rede 1: [Redes de Provedores](https://docs.openstack.org/neutron/queens/install/controller-install-option1-ubuntu.html)
+***
+### [Rede 1: Redes de Provedores](https://docs.openstack.org/neutron/queens/install/controller-install-option1-ubuntu.html)
 #### Instalação de componentes
->>Execute os comandos abaixo no **compute**.
+>>Execute os comandos abaixo no **controller**.  
+
+1. Instale os pacotes:
 ~~~
-apt install neutron-server neutron-plugin-ml2 neutron-linuxbridge-agent neutron-dhcp-agent neutron-metadata-agent
+apt install neutron-server neutron-plugin-ml2 \
+neutron-linuxbridge-agent neutron-dhcp-agent \
+neutron-metadata-agent
 ~~~
 
-Edite o arquivo `/etc/neutron/neutron.conf` 
-~~~
-vim /etc/neutron/neutron.conf 
-~~~
-
+2. Edite o arquivo `/etc/neutron/neutron.conf` 
 ~~~
 [database]
-connection = mysql+pymysql://neutron:NEUTRON_DBPASS@controller/neutron
+connection = mysql+pymysql://neutron:senha@controller/neutron
 
 [DEFAULT]
 core_plugin = ml2
@@ -822,11 +843,8 @@ password = senha
 >>*Comente ou remova demais opções da seção* `[keystone_authtoken]`  
 
 #### Configure o Plug-in modeular Layer 2 (ML2)
-Edite o arquivo `/etc/neutron/plugins/ml2/ml2_conf.ini`
-~~~
-vim /etc/neutron/plugins/ml2/ml2_conf.ini
-~~~
 
+1. Edite o arquivo `/etc/neutron/plugins/ml2/ml2_conf.ini`
 ~~~
 [ml2]
 type_drivers = flat,vlan
@@ -839,11 +857,7 @@ enable_ipset = true
 ~~~
 
 #### Configure o Bridge do Linux
-Edite o arquivo `/etc/neutron/plugins/ml2/linuxbridge_agent.ini`
-~~~
-vim /etc/neutron/plugins/ml2/linuxbridge_agent.ini
-~~~
-
+1. Edite o arquivo `/etc/neutron/plugins/ml2/linuxbridge_agent.ini`
 ~~~
 [linux_bridge]
 physical_interface_mappings = provider:PROVIDER_INTERFACE_NAME
@@ -856,7 +870,7 @@ enable_security_group = true
 firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
 ~~~
 
-Certifique-se de que o kernel do seu sistema operacional Linux suporta filtros de ponte de rede, verificando se todos os valores **sysctl** a seguir estão definidos como 1:
+2. Certifique-se de que o kernel do seu sistema operacional Linux suporta filtros de ponte de rede, verificando se todos os valores **sysctl** a seguir estão definidos como 1:
 ~~~
 net.bridge.bridge-nf-call-iptables 
 net.bridge.bridge-nf-chamada-ip6tables
@@ -864,33 +878,31 @@ net.bridge.bridge-nf-chamada-ip6tables
 
 #### Configurar o agente DHCP
 
-Edite o arquivo `/etc/neutron/dhcp_agent.ini`
-~~~
-vim /etc/neutron/dhcp_agent.ini
-~~~
-
+1. Edite o arquivo `/etc/neutron/dhcp_agent.ini`
 ~~~
 [DEFAULT]
 interface_driver = linuxbridge
 dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
 enable_isolated_metadata = true
 ~~~
+>> Retornar para a configuração do nó controlador de rede.
+***
 
-### Rede 2: [Redes de Autoatendimento](https://docs.openstack.org/neutron/queens/install/controller-install-option2-ubuntu.html)
+### [Rede 2: Redes de Autoatendimento](https://docs.openstack.org/neutron/queens/install/controller-install-option2-ubuntu.html)
 #### Instalação de componentes
 >>Execute os comandos abaixo no **controller**.
+
+1. Instale os pacotes:
 ~~~
-apt install neutron-server neutron-plugin-ml2 neutron-linuxbridge-agent neutron-l3-agent neutron-dhcp-agent neutron-metadata-agent
+apt install neutron-server neutron-plugin-ml2 \
+neutron-linuxbridge-agent neutron-l3-agent neutron-dhcp-agent \
+neutron-metadata-agent
 ~~~
 
-Edite o arquivo `/etc/neutron/neutron.conf` 
-~~~
-vim /etc/neutron/neutron.conf 
-~~~
-
+2. Edite o arquivo `/etc/neutron/neutron.conf` 
 ~~~
 [database]
-connection = mysql+pymysql://neutron:NEUTRON_DBPASS@controller/neutron
+connection = mysql+pymysql://neutron:senha@controller/neutron
 
 [DEFAULT]
 core_plugin = ml2
@@ -900,7 +912,6 @@ transport_url = rabbit://openstack:senha@controller
 auth_strategy = keystone
 notify_nova_on_port_status_changes = true
 notify_nova_on_port_data_changes = true
-
 
 [keystone_authtoken]
 auth_uri = http://controller:5000
@@ -927,11 +938,7 @@ password = senha
 
 #### Configure o Plug-in modeular Layer 2 (ML2)
 
-Edite o arquivo `/etc/neutron/plugins/ml2/ml2_conf.ini`
-~~~
-vim /etc/neutron/plugins/ml2/ml2_conf.ini
-~~~
-
+1. Edite o arquivo `/etc/neutron/plugins/ml2/ml2_conf.ini`
 ~~~
 [ml2]
 type_drivers = flat,vlan, vxlan
@@ -951,11 +958,7 @@ enable_ipset = true
 
 #### Configure o Bridge do Linux 
 
-Edite o arquivo `/etc/neutron/plugins/ml2/linuxbridge_agent.ini`
-~~~
-vim /etc/neutron/plugins/ml2/linuxbridge_agent.ini
-~~~
-
+1. Edite o arquivo `/etc/neutron/plugins/ml2/linuxbridge_agent.ini`
 ~~~
 [linux_bridge]
 physical_interface_mappings = provider:PROVIDER_INTERFACE_NAME
@@ -970,7 +973,7 @@ enable_security_group = true
 firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
 ~~~
 
-Certifique-se de que o kernel do seu sistema operacional Linux suporta filtros de ponte de rede, verificando se todos os valores **sysctl** a seguir estão definidos como 1:
+2. Certifique-se de que o kernel do seu sistema operacional Linux suporta filtros de ponte de rede, verificando se todos os valores **sysctl** a seguir estão definidos como 1:
 ~~~
 net.bridge.bridge-nf-call-iptables 
 net.bridge.bridge-nf-chamada-ip6tables
@@ -978,11 +981,7 @@ net.bridge.bridge-nf-chamada-ip6tables
 
 #### Configure o layer-3
 
-Edite o arquivo `/etc/neutron/l3_agent.ini`
-~~~
-vim /etc/neutron/l3_agent.ini
-~~~
-
+1. Edite o arquivo `/etc/neutron/l3_agent.ini`
 ~~~
 [DEFAULT]
 interface_driver = linuxbridge
@@ -990,38 +989,28 @@ interface_driver = linuxbridge
 
 #### Configure o agente DHCP
 
-Edite o arquivo `/etc/neutron/dhcp_agent.ini`
-~~~
-vim /etc/neutron/dhcp_agent.ini
-~~~
-
+1. Edite o arquivo `/etc/neutron/dhcp_agent.ini`
 ~~~
 [DEFAULT]
 interface_driver = linuxbridge
 dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
 enable_isolated_metadata = true
 ~~~
+>> Retornar para a configuração do nó controlador de rede.
+***
 
 #### Configure o agente de metadados 
 
-Edite o arquivo `/etc/neutron/metadata_agent.ini` 
-~~~
-vim /etc/neutron/metadata_agent.ini
-~~~
-
+1. Edite o arquivo `/etc/neutron/metadata_agent.ini` 
 ~~~
 [DEFAULT]
 nova_metadata_host = controller
 metadata_proxy_shared_secret = METADATA_SECRET
 ~~~
 
-
 #### Configure o serviço do Compute para usar o serviço de rede
-Edite o arquivo `/etc/nova/nova.conf`
-~~~
-vim /etc/nova/nova.conf
-~~~
 
+1. Edite o arquivo `/etc/nova/nova.conf`
 ~~~
 [neutron]
 url = http://controller:9696
@@ -1038,17 +1027,19 @@ metadata_proxy_shared_secret = METADATA_SECRET
 ~~~
 
 #### Finalize a instalação
-Preencha o banco de dados:  
+
+1. Preencha o banco de dados:  
 ~~~
-su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
+su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf \
+--config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
 ~~~
 
-Reinicie o serviço da Compute API: 
+2. Reinicie o serviço da Compute API: 
 ~~~
 service nova-api restart
 ~~~
 
-Reinicie os serviços de rede, para ambas as opções de rede (Rede 1 ou Rede 2):  
+3. Reinicie os serviços de rede, para ambas as opções de rede (Rede 1 ou Rede 2):  
 ~~~
 service neutron-server restart
 service neutron-linuxbridge-agent restart
@@ -1056,25 +1047,145 @@ service neutron-dhcp-agent restart
 service neutron-metadata-agent restart
 ~~~
 
-Para a opção de Rede 2, reinicie também o serviço de camada 3:  
+4. Para a opção de **Rede 2**, reinicie também o serviço de camada 3:  
 ~~~
 service neutron-l3-agent restart
 ~~~
+***
 
-## [Dashboard](https://docs.openstack.org/horizon/queens/install/)
-#### Guia de instalação
-Instale e configure os componentes da rede no **controller**.
+#### [Instalação e configuração do compute](https://docs.openstack.org/neutron/queens/install/compute-install-ubuntu.html)
+>>Execute os comandos abaixo no **compute**.
 
+1. Instale os pacotes:  
+`apt install neutron-linuxbridge-agent`
+
+2. Edite o arquivo `/etc/neutron/neutron.conf`:
+~~~
+[DEFAULT]
+transport_url = rabbit://openstack:RABBIT_PASS@controller
+auth_strategy = keystone
+
+[keystone_authtoken]
+auth_uri = http://controller:5000
+auth_url = http://controller:5000
+memcached_servers = controller:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = neutron
+password = NEUTRON_PASS
+~~~
+>>Comente ou remova quaisquer outras opções na seção [keystone_authtoken].
+
+#### Configurar opções de Redes - Compute
+Escolha a mesma opção de rede escolhida para o nó do controlador para configurar serviços específicos para ele. 
+- [Rede 1: Redes de Provedores](https://docs.openstack.org/neutron/queens/install/compute-install-option1-ubuntu.html)
+- [Rede 2: Redes de Autoatendimento](https://docs.openstack.org/neutron/queens/install/compute-install-option2-ubuntu.html)
+
+***
+### [Rede 1: Redes de Provedores](https://docs.openstack.org/neutron/queens/install/compute-install-option1-ubuntu.html)
+#### Configure o Bridge do Linux 
+
+1. Edite o arquivo `/etc/neutron/plugins/ml2/linuxbridge_agent.ini`
+~~~
+[linux_bridge]
+physical_interface_mappings = provider:PROVIDER_INTERFACE_NAME
+
+[vxlan]
+enable_vxlan = true
+local_ip = OVERLAY_INTERFACE_IP_ADDRESS
+l2_population = true
+
+[securitygroup]
+enable_security_group = true
+firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
+~~~
+
+2. Certifique-se de que o kernel do seu sistema operacional Linux suporta filtros de ponte de rede, verificando se todos os valores **sysctl** a seguir estão definidos como 1:
+~~~
+net.bridge.bridge-nf-call-iptables 
+net.bridge.bridge-nf-chamada-ip6tables
+~~~
+>>Retornar à configuração do nó compute de rede.
+***
+
+### [Rede 2: Redes de Autoatendimento](https://docs.openstack.org/neutron/queens/install/compute-install-option2-ubuntu.html)
+#### Configure o Bridge do Linux 
+
+1. Edite o arquivo `/etc/neutron/plugins/ml2/linuxbridge_agent.ini`
+~~~
+[linux_bridge]
+physical_interface_mappings = provider:PROVIDER_INTERFACE_NAME
+
+[vxlan]
+enable_vxlan = true
+local_ip = OVERLAY_INTERFACE_IP_ADDRESS
+l2_population = true
+
+[securitygroup]
+enable_security_group = true
+firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
+~~~
+
+2. Certifique-se de que o kernel do seu sistema operacional Linux suporta filtros de ponte de rede, verificando se todos os valores **sysctl** a seguir estão definidos como 1:
+~~~
+net.bridge.bridge-nf-call-iptables 
+net.bridge.bridge-nf-chamada-ip6tables
+~~~
+>>Retornar à configuração do nó compute de rede.
+***
+
+#### Configurar o serviço compute para usar o serviço de rede:
+3. Edite `/etc/nova/nova.conf`
+~~~
+[neutron]
+url = http://controller:9696
+auth_url = http://controller:5000
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+region_name = RegionOne
+project_name = service
+username = neutron
+password = senha
+~~~
+
+4. Finalize a instalação:
+~~~
+service nova-compute restart
+service neutron-linuxbridge-agent restart
+~~~
+
+### Verificando operação
+1. Execute os comandos:
+~~~
+openstack extension list --network
+~~~
+
+2. Para opção de **Rede 1**, execute:
+~~~
+openstack network agent list
+~~~
+>>A saída deve indicar três agentes no nó do controller e um agente em cada nó compute.
+
+
+3. Para opção de **Rede 2**, execute:
+~~~
+openstack network agent list
+~~~
+>>A saída deve indicar quatro agentes no nó do controller e um agente em cada nó compute.
+
+### [Dashboard](https://docs.openstack.org/horizon/queens/install/)
 #### [Instalação e configuração](https://docs.openstack.org/horizon/queens/install/install-ubuntu.html)
-Instale o dashboard
+>>Execute os comandos abaixo no **controller**.
+
+1. Instale o pacote:
 ~~~
 apt install openstack-dashboard
 ~~~
 
-Edite o arquivo `/etc/openstack-dashboard/local_settings.py`
-~~~
-vim /etc/openstack-dashboard/local_settings.py
-~~~
+2. Edite o arquivo `/etc/openstack-dashboard/local_settings.py`
 ~~~
 OPENSTACK_HOST = "controller"
 ALLOWED_HOSTS = ['one.example.com', 'two.example.com']
@@ -1106,7 +1217,7 @@ OPENSTACK_KEYSTONE_DEFAULT_ROLE = "user"
 - **ALLOWED_HOSTS** também pode ser ['*'] para aceitar todos os hosts. Isso pode ser útil para o trabalho de desenvolvimento, mas é potencialmente inseguro e não deve ser usado na produção. 
 >> Comente qualquer outra configuração de armazenamento de sessão.  
 
-Caso tenha escolhido a opção de Rede 1, desative o suporte para Layer-3 do serviço de Rede:
+- Caso tenha escolhido a opção de Rede 1, desative o suporte para Layer-3 do serviço de Rede:
 ~~~
 OPENSTACK_NEUTRON_NETWORK = {
     ...
@@ -1125,60 +1236,54 @@ OPENSTACK_NEUTRON_NETWORK = {
 ~~~
 TIME_ZONE = "TIME_ZONE"
 ~~~
+>>Substitua [TIME_ZONE](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) por um identificador de fuso horário apropriado. 
 
-Edite o arquivo `/etc/apache2/conf-available/openstack-dashboard.conf`
-~~~
-vim /etc/apache2/conf-available/openstack-dashboard.conf 
-~~~
-
-Inclua a seguinte linha
+3. Edite o arquivo `/etc/apache2/conf-available/openstack-dashboard.conf`
 ~~~
 WSGIApplicationGroup %{GLOBAL}
 ~~~
 
 #### Finalize a instalação
+1. Restarte o serviço:
+~~~
 service apache2 reload
+~~~
 
 ### [Verificando Operação](https://docs.openstack.org/horizon/queens/install/verify-ubuntu.html)
 Acesse o painel usando um navegador Web em http://controller/horizon.  
 Acesse usando **admin** ou **demo user** e credenciais **default** de domínio.
 
 ### [Serviço de Armazenamento de Bloco](https://docs.openstack.org/cinder/queens/install/)
-#### Instalação e configuração
->> Execute estas etapas no nó de armazenamento (**Block**).  
+#### [Instalação e configuração do block](https://docs.openstack.org/cinder/queens/install/cinder-storage-install-ubuntu.html)
+>>Execute estas etapas em **block**.  
 
+1. Instale os pacotes de utilitários de suporte:
 ~~~
 apt install lvm2 thin-provisioning-tools
 ~~~
 
-Crie o volume `/dev/sdb`
+2. Crie o volume `/dev/sdb`
 ~~~
 pvcreate /dev/sdb
 vgcreate cinder-volumes /dev/sdb
 ~~~
 
-Edite o arquivo `/etc/lvm/lvm.conf` 
-~~~
-vim /etc/lvm/lvm.conf 
-~~~
+3. Edite o arquivo `/etc/lvm/lvm.conf` 
 ~~~
 devices {
 filter = [ "a/sdb/", "r/.*/"]
 ~~~
 
-### Instale e configure os componentes - Máquina Block
-Instale e configure os componentes da rede no **Block**.  
+### Instalação e configuração de componentes
+1. Instale os pacotes:  
 ~~~
 apt install cinder-volume
 ~~~
 
-Edite o arquivo `/etc/cinder/cinder.conf` 
-~~~
-vim /etc/cinder/cinder.conf 
-~~~
+2. Edite o arquivo `/etc/cinder/cinder.conf` 
 ~~~
 [database]
-connection = mysql+pymysql://cinder:CINDER_DBPASS@controller/cinder
+connection = mysql+pymysql://cinder:senha@controller/cinder
 
 [DEFAULT]
 transport_url = rabbit://openstack:senha@controller
@@ -1210,25 +1315,25 @@ lock_path = /var/lib/cinder/tmp
 >>*Comente ou remova demais opções da seção* `[keystone_authtoken]`
 
 #### Finalize a instalação
+1. Restarte os serviços:
 ~~~
 service tgt restart
 service cinder-volume restart
 ~~~
 
-### [Instale e configure os componentes - Máquina Controller](https://docs.openstack.org/cinder/queens/install/cinder-controller-install-ubuntu.html)
-Instale e configure os componentes da rede no **Controller**.  
+### [Instalação e configuração do controller](https://docs.openstack.org/cinder/queens/install/cinder-controller-install-ubuntu.html)
+>>Execute estas etapas em **controller**.  
+
+1. Para criar o banco de dados, conclua estas etapas:  
 ~~~
 mysql -u root -psenha
 CREATE DATABASE cinder;
-GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'localhost' IDENTIFIED BY 'CINDER_DBPASS';
-GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%' IDENTIFIED BY 'CINDER_DBPASS';
+GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'localhost' IDENTIFIED BY 'senha';
+GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%' IDENTIFIED BY 'senha';
 exit;
 ~~~
 
-~~~
-. admin-openrc
-~~~
-
+2. Para criar as credenciais de serviço, conclua estas etapas:
 ~~~
 openstack user create --domain default --password-prompt cinder
 openstack role add --project service --user cinder admin
@@ -1243,18 +1348,15 @@ openstack endpoint create --region RegionOne volumev3 admin http://controller:87
 ~~~
 
 #### Instalação e configuração de componentes
+1. Instale os pacotes:
 ~~~
 apt install cinder-api cinder-scheduler
 ~~~
 
-Edite o arquivo `/etc/cinder/cinder.conf`
-~~~
-vim /etc/cinder/cinder.conf
-~~~
-
+2. Edite o arquivo `/etc/cinder/cinder.conf`
 ~~~
 [database]
-connection = mysql+pymysql://cinder:CINDER_DBPASS@controller/cinder
+connection = mysql+pymysql://cinder:senha@controller/cinder
 
 [DEFAULT]
 transport_url = rabbit://openstack:senha@controller
@@ -1276,56 +1378,53 @@ password = senha
 lock_path = /var/lib/cinder/tmp
 ~~~
 
+3. Preencha o banco de dados do Armazenamento em Bloco:
 ~~~
 su -s /bin/sh -c "cinder-manage db sync" cinder
 ~~~
 
-#### Configure compute para usar o armazenamento em Bloco
-Edite o arquivo `etc/nova/nova.conf`
-~~~
-vim etc/nova/nova.conf
-~~~
-
+4. Edite o arquivo `etc/nova/nova.conf`.
 ~~~
 [cinder]
 os_region_name = RegionOne
 ~~~
 
 #### Finalize a instalação
+1. Reinicie os serviços:
 ~~~
 service nova-api restart
 service cinder-scheduler restart
 service apache2 restart
 ~~~
 
-### [Instale e configure o serviço de backup (Opcional)](https://docs.openstack.org/cinder/queens/install/cinder-backup-install-ubuntu.html)
-Instale e configure os componentes da rede no **Block**.
+### [Instalação e configuração do serviço de backup (Opcional)](https://docs.openstack.org/cinder/queens/install/cinder-backup-install-ubuntu.html)
+>>Execute estas etapas em **block**.  
+
+1. Instale o pacote:
 ~~~
 apt install cinder-backup
 ~~~
 
-Edite o arquivo  `/etc/cinder/cinder.conf` 
-~~~
-vim  /etc/cinder/cinder.conf 
-~~~
-
+2. Edite o arquivo  `/etc/cinder/cinder.conf`.
 ~~~
 [DEFAULT]
 backup_driver = cinder.backup.drivers.swift
 backup_swift_url = SWIFT_URL
 ~~~
 
+3. Execute o comando:
 ~~~
 openstack catalog show object-store
 ~~~
 
 #### Finalize a instalação
+1. Restarte o serviço do cinder:
 ~~~
 service cinder-backup restart
 ~~~
 
 ### [Verificando Openração Cinder](https://docs.openstack.org/cinder/queens/install/cinder-verify.html)
-Verificando a operação do serviço de armazenamento em bloco.  
+1. Verificando a operação do serviço de armazenamento em bloco:  
 ~~~
 openstack volume service list
 ~~~
