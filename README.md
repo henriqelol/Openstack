@@ -5,7 +5,7 @@ Este documento apresenta os links conforme foi implementado passo a passo a inst
 ## Guia de Instalação do OpenStack
 Toda documentação foi feita a partir do [Guia de Instalação](https://docs.openstack.org/install-guide/), a versão utilizada foi a  [**queens**](https://www.openstack.org/software/queens/).  
 
-
+***
 ### Máquina Servidor
 Para instalação de Openstack, foi utilizado um servidor com as seguintes configurações:  
 **Configurações de Hardware**: Processador: 8 Núcleos; Memória: 16 GB; HD: 1TB.  
@@ -14,22 +14,22 @@ Para instalação de Openstack, foi utilizado um servidor com as seguintes confi
 VirtualBox - *Versão 5.2.22 r126460 (Qt5.6.1)*.   
 Vagrant - *Versão 2.2.1*.    
 >>*Toda instalação de ambiente foi através de acesso SSH -X*.
-
+***
 
 ### [Ambientes criados no VirtualBox/Vagrant](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md)
 Para criações das VMs, utilizando [**VAGRANT**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md) ou [**VIRTUALBOX**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md), basta acessar o link e seguir os passos apresentados:
 
 **Configurações das VMs: Controller/Compute/Block:**  
 Processador: 4 Núcleos; Memória: 10 GB; HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
-
+***
 
 ### [Configuração de Rede do Ambiente](https://docs.openstack.org/install-guide/environment-networking.html)
 Rede de hosts, com valores de interfaces e ips.  
 ![Plano de Rede](https://docs.openstack.org/install-guide/_images/networklayout.png)
+***
 
-#### [Controller](https://docs.openstack.org/install-guide/environment-networking-controller.html)
+### [Controller](https://docs.openstack.org/install-guide/environment-networking-controller.html)
 **Configurar interfaces de rede**
->>Configuração de interface da máquina **controller**.
 1. Configure a primeira interface como a interface de gerenciamento:  
 ~~~
         IP address: 10.0.0.11  
@@ -55,7 +55,7 @@ iface enp0s8 inet dhcp
 reboot
 ~~~
 
-**Configurar resolução de nomes**
+**Configurar nomes**
 1. Defina o nome do host do nó para **controller**.  
 
 2. Edite o arquivo `/etc/hosts`:
@@ -70,10 +70,10 @@ compute
 block
 10.0.0.41       block
 ~~~
+***
 
-#### [Compute](https://docs.openstack.org/install-guide/environment-networking-compute.html)
+### [Compute](https://docs.openstack.org/install-guide/environment-networking-compute.html)
 **Configurar interfaces de rede**
->>Configuração de interface da máquina **compute**.
 1. Configure a primeira interface como a interface de gerenciamento: 
 ~~~
         IP address: 10.0.0.31
@@ -98,7 +98,7 @@ iface enp0s8 inet dhcp
 reboot
 ~~~
 
-**Configurar resolução de nomes**
+**Configurar nomes**
 1. Defina o nome do host do nó para **compute**.  
 
 2. Edite o arquivo `/etc/hosts`:
@@ -113,20 +113,23 @@ compute
 block
 10.0.0.41       block
 ~~~
+***
 
-#### [Block](https://docs.openstack.org/install-guide/environment-networking-storage-cinder.html)
+### [Block](https://docs.openstack.org/install-guide/environment-networking-storage-cinder.html)
 **Configurar interfaces de rede**
 >>Configuração de interface da máquina **block**. 
 >>*Mesmos passos anteriores, alterando apenas o valor final do endereço IP para o valor 41*. 
+***
 
-#### [Verificação de conectividade](https://docs.openstack.org/install-guide/environment-networking-verify.html)
+### [Verificação de conectividade](https://docs.openstack.org/install-guide/environment-networking-verify.html)
 1. Teste o acesso da rede entre os nós executando os comandos em todos:
 ~~~
 ping -c 4 controller  
 ping -c 4 compute  
 ping -c 4 block  
 ~~~
-
+***
+***
 
 ### [Network Time Protocol (NTP)](https://docs.openstack.org/install-guide/environment-ntp.html)
 Para sincronizar corretamente os serviços entre nós, é preciso instalar o Chrony, uma implementação do NTP.  
@@ -165,12 +168,15 @@ server controller iburst
 ~~~
 service chrony restart
 ~~~
+***
 
 #### [Verificando Operação](https://docs.openstack.org/install-guide/environment-ntp-verify.html)
 1. Execute em todas máquinas o comando.  
 ~~~
 chronyc sources  
 ~~~
+***
+***
 
 ## [Instalação de Pacotes OpenStack no Ubuntu (Versão Queens)](https://docs.openstack.org/install-guide/environment-packages-ubuntu.html)
 **OpenStack Queens for Ubuntu 16.04 LTS:**  
@@ -190,6 +196,7 @@ apt update && apt dist-upgrade
 ~~~
 apt install python-openstackclient  
 ~~~
+***
 
 ### [SQL Database](https://docs.openstack.org/install-guide/environment-sql-database-ubuntu.html)
 A documentação do **Openstack Queens**, apresenta e utiliza o banco de dados MariaDB, porém para estudo foi utilizado o Mysql.
@@ -231,6 +238,7 @@ apt-get install mysql-server python-pymysql
 ~~~
 service mysql restart
 ~~~
+***
 
 ### [Mensagem Queue](https://docs.openstack.org/install-guide/environment-messaging-ubuntu.html)
 >>*Execute os comandos no* **Controller**.  
@@ -251,6 +259,7 @@ rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 systemctl enable rabbitmq-server.service
 systemctl start rabbitmq-server.service
 ~~~
+***
 
 ### [Memcached](https://docs.openstack.org/install-guide/environment-memcached.html)
 >>*Execute os comandos no* **Controller**.  
@@ -270,6 +279,7 @@ apt install memcached python-memcache
 ~~~
 service memcached restart
 ~~~
+***
 
 ### [ETCD](https://docs.openstack.org/install-guide/environment-etcd-ubuntu.html)
 >>*Execute os comandos no* **Controller**.  
@@ -297,8 +307,10 @@ ETCD_LISTEN_CLIENT_URLS="http://10.0.0.11:2379"
 systemctl enable etcd
 systemctl start etcd
 ~~~
+***
+***
 
-### [Instalação de Serviços OpenStack](https://docs.openstack.org/install-guide/openstack-services.html)
+## [Instalação de Serviços OpenStack](https://docs.openstack.org/install-guide/openstack-services.html)
 No mínimo, você precisa instalar os seguintes serviços. Instale os serviços na ordem especificada abaixo:  
 * Serviço de Identidade - instalação do **Keystone**.  
 * Serviço de Imagem - instalação do **Glance**   
@@ -308,8 +320,9 @@ No mínimo, você precisa instalar os seguintes serviços. Instale os serviços 
 Aconselhamos também instalar os seguintes componentes depois de instalar os serviços de implantação mínimos: 
 * Dashboard - instalação do **Horizon**  
 * Serviço de armazenamento em bloco - instalação do **Cinder**
+***
 
-### [Serviço de Identidade](https://docs.openstack.org/keystone/queens/install/)
+### [Serviço de Identidade - Instalação do Keystone](https://docs.openstack.org/keystone/queens/install/)
 >>*Execute os comandos no* **Controller**  
 
 #### Pré-requisitos
@@ -461,8 +474,9 @@ export OS_IMAGE_API_VERSION=2
 ~~~
 openstack token issue
 ~~~
+***
 
-### [Serviço de Image](https://docs.openstack.org/glance/queens/install/)
+### [Serviço de Image - Instalação do Glance](https://docs.openstack.org/glance/queens/install/)
 #### [Instalação e configuração](https://docs.openstack.org/glance/queens/install/install-ubuntu.html)
 >>Execute os comandos abaixo no **controller**  
 
@@ -565,8 +579,9 @@ openstack image create "cirros" --file cirros-0.4.0-x86_64-disk.img --disk-forma
 ~~~
 openstack image list
 ~~~
+***
 
-### [Serviço de Compute](https://docs.openstack.org/nova/queens/install/)
+### [Serviço de Computação - Instalação do Nova](https://docs.openstack.org/nova/queens/install/)
 #### [Instalação e configuração do controller](https://docs.openstack.org/nova/queens/install/controller-install-ubuntu.html)
 >>Execute os comandos abaixo no **controller**.  
 
@@ -766,8 +781,9 @@ openstack catalog list
 openstack image list
 nova-status upgrade check
 ~~~
+***
 
-### [Serviço de Networking](https://docs.openstack.org/neutron/queens/install/)
+### [Serviço de Networking - Instalação do Neutron](https://docs.openstack.org/neutron/queens/install/)
 #### [Instalação e configuração do controller](https://docs.openstack.org/neutron/queens/install/controller-install-obs.html)
 
 1. Para criar o banco de dados, conclua estas etapas:
@@ -1175,8 +1191,9 @@ openstack network agent list
 openstack network agent list
 ~~~
 >>A saída deve indicar quatro agentes no nó do controller e um agente em cada nó compute.
+***
 
-### [Dashboard](https://docs.openstack.org/horizon/queens/install/)
+### [Dashboard - Instalação do Horizon](https://docs.openstack.org/horizon/queens/install/)
 #### [Instalação e configuração](https://docs.openstack.org/horizon/queens/install/install-ubuntu.html)
 >>Execute os comandos abaixo no **controller**.
 
@@ -1252,8 +1269,9 @@ service apache2 reload
 ### [Verificando Operação](https://docs.openstack.org/horizon/queens/install/verify-ubuntu.html)
 Acesse o painel usando um navegador Web em http://controller/horizon.  
 Acesse usando **admin** ou **demo user** e credenciais **default** de domínio.
+***
 
-### [Serviço de Armazenamento de Bloco](https://docs.openstack.org/cinder/queens/install/)
+### [Serviço de Armazenamento em Bloco - Instalação do Cinder](https://docs.openstack.org/cinder/queens/install/)
 #### [Instalação e configuração do block](https://docs.openstack.org/cinder/queens/install/cinder-storage-install-ubuntu.html)
 >>Execute estas etapas em **block**.  
 
