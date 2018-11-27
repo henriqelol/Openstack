@@ -1444,8 +1444,113 @@ openstack catalog show object-store
 service cinder-backup restart
 ~~~
 
-### [Verificando Openração Cinder](https://docs.openstack.org/cinder/queens/install/cinder-verify.html)
+### [Verificando Operação Cinder](https://docs.openstack.org/cinder/queens/install/cinder-verify.html)
 1. Verificando a operação do serviço de armazenamento em bloco:  
 ~~~
 openstack volume service list
+~~~
+***
+
+## Finalizando Instalação Ironic
+1. Configurando o banco de dados:
+~~~
+mysql -u root -psenha
+CREATE DATABASE ironic CHARACTER SET utf8;
+GRANT ALL PRIVILEGES ON ironic.* TO 'ironic'@'localhost' \
+       IDENTIFIED BY 'IRONIC_DBPASSWORD';
+GRANT ALL PRIVILEGES ON ironic.* TO 'ironic'@'%' \
+       IDENTIFIED BY 'IRONIC_DBPASSWORD';
+exit;
+~~~
+
+2. Instale os pacotes;
+~~~
+apt-get install ironic-api ironic-conductor python-ironicclient
+~~~
+
+3. Edite o arquivo `/etc/ironic/ironic.conf`.
+~~~
+[database]
+connection=mysql+pymysql://ironic:IRONIC_DBPASSWORD@DB_IP/ironic?charset=utf8
+
+[DEFAULT]
+transport_url = rabbit://RPC_USER:RPC_PASSWORD@RPC_HOST:RPC_PORT/
+auth_strategy=keystone
+
+[keystone_authtoken]
+auth_type=password
+www_authenticate_uri=http://PUBLIC_IDENTITY_IP:5000
+auth_url=http://PRIVATE_IDENTITY_IP:35357
+username=ironic
+password=IRONIC_PASSWORD
+project_name=service
+project_domain_name=Default
+user_domain_name=Default
+~~~
+>>Substitua **PUBLIC_IDENTITY_IP** pelo IP público do servidor de identidade,
+>>**PRIVATE_IDENTITY_IP** pelo IP privado do servidor de identidade.
+
+4. Crie as tabelas do banco de dados de serviço Bare Metal:
+~~~
+ironic-dbsync --config-file /etc/ironic/ironic.conf create_schema
+~~~
+
+5. Reinicie o serviço ironic-api:
+~~~
+sudo service ironic-api restart
+~~~
+
+### Configurando irônico-api com mod_wsgi
+1. Instale o serviço do apache:
+~~~
+apt-get install apache2
+~~~
+
+2. Copie o arquivo `etc/apache2/ironic`
+~~~
+cp etc/apache2/ironic /etc/apache2/sites-available/ironic.conf
+~~~
+3. Edite o arquivo copiado ` <apache-configuration-dir>/ironic.conf`  
+- Modificar as variáveis **WSGIDaemonProcess**, **APACHE_RUN_USER** e **APACHE_RUN_GROUP** para definir os valores de usuário e grupo para um usuário apropriado em seu servidor.  
+- Modifique a variável **WSGIScriptAlias** para apontar para o ironic-api-wsgiscript gerado automaticamente localizado no diretório IRONIC_BIN .  
+- Modifique a variável **Directory** para definir o caminho para o código da Ironic API.  
+- Modifique os logs **ErrorLog** e **CustomLog** para o diretório correto.  
+>>O arquivo ironic-api-wsgi é gerado automaticamente pelo pbr e está disponível no diretório IRONIC_BIN . Não deve ser modificado.  
+
+4. Ative o apache ironic no site e recarregue:
+~~~
+sudo a2ensite ironic
+sudo service apache2 reload
+~~~
+#### Configurando o serviço de condutor irônico
+1. Substitua HOST_IP por IP do host do condutor.
+~~~
+[DEFAULT]
+my_ip=HOST_IP
+~~~
+
+2. Configure a localização do banco de dados.
+~~~
+[database]
+connection=mysql+pymysql://ironic:IRONIC_DBPASSWORD@DB_IP/ironic?charset=utf8
+~~~
+
+3. Configure o serviço de condutor irônico para usar o intermediário de mensagem RabbitMQ configurando a opção a seguir.
+~~~
+[DEFAULT]
+transport_url = rabbit://RPC_USER:RPC_PASSWORD@RPC_HOST:RPC_PORT/
+~~~
+
+4. Configure credenciais para acessar outros serviços do OpenStack.
+- [neutron] - para acessar o serviço OpenStack Networking  
+- [glance] - para acessar o serviço OpenStack Image  
+- [swift] - para acessar o serviço OpenStack Object Storage  
+- [inspector] - para acessar o serviço OpenStack Bare Metal Introspection  
+- [service_catalog] - uma seção especial que contém credenciais que o serviço Bare Metal usará para descobrir seu próprio ponto de extremidade de URL da API, conforme registrado no catálogo do serviço OpenStack Identity.  
+
+>> Não foi colocado o código, pois é conforme a necessidade do usuário, para mais detalhes visita a [página](https://docs.openstack.org/ironic/queens/install/install-ubuntu.html) .
+
+5. Reinicie o serviço de condutores irônicos:
+~~~
+sudo service ironic-conductor restart
 ~~~
