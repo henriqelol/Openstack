@@ -1,5 +1,6 @@
-# Instalação do OpenStack
+# Instalação do OpenStack Ironic e Kolla-Ansible
 Este documento apresenta os links conforme foi implementado passo a passo a instalação do [**Openstack Ironic**](https://docs.openstack.org/ironic/latest/) e [**Openstack Kolla-Ansible**](https://docs.openstack.org/kolla-ansible/latest/).
+
 
 ## Guia de Instalação do OpenStack
 Toda documentação foi feita a partir do [Guia de Instalação](https://docs.openstack.org/install-guide/), a versão utilizada foi a  [**queens**](https://www.openstack.org/software/queens/).  
@@ -7,32 +8,36 @@ Toda documentação foi feita a partir do [Guia de Instalação](https://docs.op
 
 ### Máquina Servidor
 Para instalação de Openstack, foi utilizado um servidor com as seguintes configurações:  
-**Configurações de Hardware**: Processador: 8 Nucleos; Memória: 16 GB; HD: 1TB.  
+**Configurações de Hardware**: Processador: 8 Núcleos; Memória: 16 GB; HD: 1TB.  
 **Configurações de Software**: Sistema: Ubuntu 16.04    
-**Programas utilizados**: 
-VirtualBox - Versão 5.2.22 r126460 (Qt5.6.1).  
-                      Vagrant - Versão 2.2.1                            
-
+**Programas utilizados**:  
+VirtualBox - *Versão 5.2.22 r126460 (Qt5.6.1).*   
+Vagrant - *Versão 2.2.1*    
 >>*Toda instalação de ambiente foi através de acesso SSH -X*.
 
+
 ### [Ambientes criados no VirtualBox/Vagrant](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md)
-Para ambos situações de criações de VMs, utilizando o [**VAGRANT**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md) ou o [**VIRTUALBOX**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md), basta acessar o link e seguir os passos apresentados:
+Para criações das VMs, utilizando [**VAGRANT**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md) ou [**VIRTUALBOX**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md), basta acessar o link e seguir os passos apresentados:
 
 **Configurações das VMs: Controller/Compute/Block:**  
-Memória: 10240 mb, Proc: 4 Nucleos, HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
+Processador: 4 Núcleos; Memória: 10 GB; HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
+
 
 ### [Configuração de Rede do Ambiente](https://docs.openstack.org/install-guide/environment-networking.html)
+Rede de hosts, com valores de interfaces e ips.  
 ![Plano de Rede](https://docs.openstack.org/install-guide/_images/networklayout.png)
 
 #### [Controller](https://docs.openstack.org/install-guide/environment-networking-controller.html)
-Configuração de interface da máquina **controller**.  
+**Configurar interfaces de rede**
+>>Configuração de interface da máquina **controller**.
+1. Configure a primeira interface como a interface de gerenciamento:  
 ~~~
         IP address: 10.0.0.11  
         Network mask: 255.255.255.0 (or /24)  
         Default gateway: 10.0.0.1  
 ~~~
 
-Configure a interface de rede editando o arquivo `/etc/network/interfaces`
+2. Configure a interface de rede editando o arquivo `/etc/network/interfaces`
 ~~~
 auto enp0s3
 iface enp0s3 inet manual
@@ -45,11 +50,15 @@ auto enp0s8
 iface enp0s8 inet dhcp
 ~~~
 
-Edite o arquivo `/etc/hosts`
+3. Reinicie o sistema para ativar as mudanças.  
 ~~~
-sudo vim /etc/hosts
+reboot
 ~~~
 
+**Configurar resolução de nomes**
+1. Defina o nome do host do nó para **controller**.  
+
+2. Edite o arquivo `/etc/hosts`:
 ~~~
 127.0.0.1       localhost
 #127.0.1.1       controller
