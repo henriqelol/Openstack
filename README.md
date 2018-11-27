@@ -1457,9 +1457,9 @@ openstack volume service list
 mysql -u root -psenha
 CREATE DATABASE ironic CHARACTER SET utf8;
 GRANT ALL PRIVILEGES ON ironic.* TO 'ironic'@'localhost' \
-       IDENTIFIED BY 'IRONIC_DBPASSWORD';
+       IDENTIFIED BY 'senha';
 GRANT ALL PRIVILEGES ON ironic.* TO 'ironic'@'%' \
-       IDENTIFIED BY 'IRONIC_DBPASSWORD';
+       IDENTIFIED BY 'senha';
 exit;
 ~~~
 
@@ -1471,7 +1471,7 @@ apt-get install ironic-api ironic-conductor python-ironicclient
 3. Edite o arquivo `/etc/ironic/ironic.conf`.
 ~~~
 [database]
-connection=mysql+pymysql://ironic:IRONIC_DBPASSWORD@DB_IP/ironic?charset=utf8
+connection=mysql+pymysql://ironic:senha@DB_IP/ironic?charset=utf8
 
 [DEFAULT]
 transport_url = rabbit://RPC_USER:RPC_PASSWORD@RPC_HOST:RPC_PORT/
@@ -1532,7 +1532,7 @@ my_ip=HOST_IP
 2. Configure a localização do banco de dados.
 ~~~
 [database]
-connection=mysql+pymysql://ironic:IRONIC_DBPASSWORD@DB_IP/ironic?charset=utf8
+connection=mysql+pymysql://ironic:senha@DB_IP/ironic?charset=utf8
 ~~~
 
 3. Configure o serviço de condutor irônico para usar o intermediário de mensagem RabbitMQ configurando a opção a seguir.
