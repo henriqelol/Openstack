@@ -11,8 +11,8 @@ Para instalação de Openstack, foi utilizado um servidor com as seguintes confi
 **Configurações de Hardware**: Processador: 8 Núcleos; Memória: 16 GB; HD: 1TB.  
 **Configurações de Software**: Sistema: Ubuntu 16.04    
 **Programas utilizados**:  
-VirtualBox - *Versão 5.2.22 r126460 (Qt5.6.1).*   
-Vagrant - *Versão 2.2.1*    
+VirtualBox - *Versão 5.2.22 r126460 (Qt5.6.1)*.   
+Vagrant - *Versão 2.2.1*.    
 >>*Toda instalação de ambiente foi através de acesso SSH -X*.
 
 
@@ -37,7 +37,7 @@ Rede de hosts, com valores de interfaces e ips.
         Default gateway: 10.0.0.1  
 ~~~
 
-2. Configure a interface de rede editando o arquivo `/etc/network/interfaces`
+2. Configure a interface de rede editando o arquivo `/etc/network/interfaces`:
 ~~~
 auto enp0s3
 iface enp0s3 inet manual
@@ -50,7 +50,7 @@ auto enp0s8
 iface enp0s8 inet dhcp
 ~~~
 
-3. Reinicie o sistema para ativar as mudanças.  
+3. Reinicie o sistema para ativar as mudanças:  
 ~~~
 reboot
 ~~~
@@ -72,18 +72,16 @@ block
 ~~~
 
 #### [Compute](https://docs.openstack.org/install-guide/environment-networking-compute.html)
-Configuração de interface da máquina **compute**.  
+**Configurar interfaces de rede**
+>>Configuração de interface da máquina **compute**.
+1. Configure a primeira interface como a interface de gerenciamento: 
 ~~~
         IP address: 10.0.0.31
         Network mask: 255.255.255.0 (or /24)
         Default gateway: 10.0.0.1
 ~~~
 
-Configure a interface de rede editando o arquivo `/etc/network/interfaces`
-~~~
-sudo vim /etc/network/interfaces
-~~~
-
+2. Configure a interface de rede editando o arquivo `/etc/network/interfaces`:
 ~~~
 auto enp0s3
 iface enp0s3 inet manual
@@ -95,12 +93,15 @@ iface enp0s3 inet manual
 auto enp0s8
 iface enp0s8 inet dhcp
 ~~~
-
-Edite o arquivo `/etc/hosts`
+3. Reinicie o sistema para ativar as mudanças:  
 ~~~
-sudo vim /etc/hosts
+reboot
 ~~~
 
+**Configurar resolução de nomes**
+1. Defina o nome do host do nó para **compute**.  
+
+2. Edite o arquivo `/etc/hosts`:
 ~~~
 127.0.0.1       localhost
 #127.0.1.1       compute
@@ -114,10 +115,12 @@ block
 ~~~
 
 #### [Block](https://docs.openstack.org/install-guide/environment-networking-storage-cinder.html)
-Configuração de interface da máquina **Block**  
->>*Mesmos passos anteriores, alterando apenas o valor final do endereço IP para o valor 41* 
+**Configurar interfaces de rede**
+>>Configuração de interface da máquina **block**. 
+>>*Mesmos passos anteriores, alterando apenas o valor final do endereço IP para o valor 41*. 
 
-### [Verificação de conectividade](https://docs.openstack.org/install-guide/environment-networking-verify.html)
+#### [Verificação de conectividade](https://docs.openstack.org/install-guide/environment-networking-verify.html)
+1. Teste o acesso da rede entre os nós executando os comandos em todos:
 ~~~
 ping -c 4 controller  
 ping -c 4 compute  
@@ -126,60 +129,65 @@ ping -c 4 block
 
 
 ### [Network Time Protocol (NTP)](https://docs.openstack.org/install-guide/environment-ntp.html)
-#### Instalação e configuração de componentes
+Para sincronizar corretamente os serviços entre nós, é preciso instalar o Chrony, uma implementação do NTP.  
 
 #### [Controller](https://docs.openstack.org/install-guide/environment-ntp-controller.html)
+1. Instale os pacotes:
 ~~~
 apt install chrony  
 ~~~
 
-Edite o arquivo `/etc/chrony/chrony.conf`   
-~~~
-sudo vim /etc/chrony/chrony.conf
-~~~
-
+2. Edite o arquivo `/etc/chrony/chrony.conf`:   
 ~~~
 server NTP_SERVER iburst  
 allow 10.0.0.0/24
 ~~~
 >>*colocar endereço de NTP_SERVER válido*  
 
+3. Reinicie o serviço NTP:
 ~~~
 service chrony restart
 ~~~
 
 #### [Outros Nós](https://docs.openstack.org/install-guide/environment-ntp-other.html)
+1. Instale os pacotes:
 ~~~
 apt install chrony
 ~~~
 
-Edite o arquivo `/etc/chrony/chrony.conf`
-~~~
-sudo vim /etc/chrony/chrony.conf
-~~~
-
+2. Edite o arquivo `/etc/chrony/chrony.conf`.
 ~~~
 server controller iburst
-service chrony restart
 ~~~
 >>*Comente a linha  pool 2.debian.pool.ntp.org offline iburst*   
 
-### Verificando Operação
-Execute em todas máquinas o comando.  
+3. Reinicie o serviço NTP:
+~~~
+service chrony restart
+~~~
+
+#### [Verificando Operação](https://docs.openstack.org/install-guide/environment-ntp-verify.html)
+1. Execute em todas máquinas o comando.  
 ~~~
 chronyc sources  
 ~~~
 
 ## [Instalação de Pacotes OpenStack no Ubuntu (Versão Queens)](https://docs.openstack.org/install-guide/environment-packages-ubuntu.html)
-OpenStack Queens for Ubuntu 16.04 LTS:  
+**OpenStack Queens for Ubuntu 16.04 LTS:**  
 ~~~
 apt install software-properties-common  
 add-apt-repository cloud-archive:queens  
 ~~~
 
-Finalize a instalação  
+#### Finalize a instalação
+1. Atualize os pacotes em todos os nós:
 ~~~
 apt update && apt dist-upgrade  
+~~~
+>>Se o processo de atualização incluir um novo kernel, reinicie seu host para ativá-lo.
+
+2. Instale o cliente OpenStack:
+~~~
 apt install python-openstackclient  
 ~~~
 
@@ -263,7 +271,7 @@ apt install etcd
 
 Edite o arquivo `/etc/default/etcd`  
 ~~~
-sudo vim /etc/default/etcd
+vim /etc/default/etcd
 ~~~
 
 ~~~
@@ -316,7 +324,7 @@ apt install keystone  apache2 libapache2-mod-wsgi
 
 Configure o arquivo `/etc/keystone/keystone.conf`
 ~~~
-sudo vim /etc/keystone/keystone.conf
+vim /etc/keystone/keystone.conf
 ~~~
 
 ~~~
@@ -346,7 +354,7 @@ keystone-manage bootstrap --bootstrap-password senha \
 ### Configure o servidor Apache HTTP
 Edite o arquivo `/etc/apache2/apache2.conf`
 ~~~
-sudo vim /etc/apache2/apache2.conf
+vim /etc/apache2/apache2.conf
 ~~~
 
 ~~~
@@ -400,7 +408,7 @@ openstack --os-auth-url http://controller:5000/v3 \
 #### Criando scripts do ambiente do cliente Openstack
 Criando os arquivos `admin-openrc` e `demon-openrc`.
 ~~~
-sudo vim admin-openrc
+vim admin-openrc
 ~~~
 
 Edite o arquivo admin-openrc
@@ -416,7 +424,7 @@ export OS_IMAGE_API_VERSION=2
 ~~~
 
 ~~~
-sudo vim demon-openrc
+vim demon-openrc
 ~~~
 
 Edite o arquivo demon-openrc
@@ -654,7 +662,7 @@ apt install nova-compute
 
 Edite o arquivo `etc/nova/nova.conf`
 ~~~
-sudo vim etc/nova/nova.conf
+vim etc/nova/nova.conf
 ~~~
 
 ~~~
@@ -709,7 +717,7 @@ egrep -c '(vmx|svm)' /proc/cpuinfo
 
 Edite o arquivo `/etc/nova/nova-compute.conf`
 ~~~
-sudo vim /etc/nova/nova-compute.conf
+vim /etc/nova/nova-compute.conf
 ~~~
 
 ~~~
@@ -770,7 +778,7 @@ apt install neutron-server neutron-plugin-ml2 neutron-linuxbridge-agent neutron-
 
 Edite o arquivo `/etc/neutron/neutron.conf` 
 ~~~
-sudo vim /etc/neutron/neutron.conf 
+vim /etc/neutron/neutron.conf 
 ~~~
 
 ~~~
@@ -811,7 +819,7 @@ password = senha
 #### Configure o Plug-in modeular Layer 2 (ML2)
 Edite o arquivo `/etc/neutron/plugins/ml2/ml2_conf.ini`
 ~~~
-sudo vim /etc/neutron/plugins/ml2/ml2_conf.ini
+vim /etc/neutron/plugins/ml2/ml2_conf.ini
 ~~~
 
 ~~~
@@ -828,7 +836,7 @@ enable_ipset = true
 #### Configure o Bridge do Linux
 Edite o arquivo `/etc/neutron/plugins/ml2/linuxbridge_agent.ini`
 ~~~
-sudo vim /etc/neutron/plugins/ml2/linuxbridge_agent.ini
+vim /etc/neutron/plugins/ml2/linuxbridge_agent.ini
 ~~~
 
 ~~~
@@ -853,7 +861,7 @@ net.bridge.bridge-nf-chamada-ip6tables
 
 Edite o arquivo `/etc/neutron/dhcp_agent.ini`
 ~~~
-sudo vim /etc/neutron/dhcp_agent.ini
+vim /etc/neutron/dhcp_agent.ini
 ~~~
 
 ~~~
@@ -872,7 +880,7 @@ apt install neutron-server neutron-plugin-ml2 neutron-linuxbridge-agent neutron-
 
 Edite o arquivo `/etc/neutron/neutron.conf` 
 ~~~
-sudo vim /etc/neutron/neutron.conf 
+vim /etc/neutron/neutron.conf 
 ~~~
 
 ~~~
@@ -916,7 +924,7 @@ password = senha
 
 Edite o arquivo `/etc/neutron/plugins/ml2/ml2_conf.ini`
 ~~~
-sudo vim /etc/neutron/plugins/ml2/ml2_conf.ini
+vim /etc/neutron/plugins/ml2/ml2_conf.ini
 ~~~
 
 ~~~
@@ -940,7 +948,7 @@ enable_ipset = true
 
 Edite o arquivo `/etc/neutron/plugins/ml2/linuxbridge_agent.ini`
 ~~~
-sudo vim /etc/neutron/plugins/ml2/linuxbridge_agent.ini
+vim /etc/neutron/plugins/ml2/linuxbridge_agent.ini
 ~~~
 
 ~~~
@@ -967,7 +975,7 @@ net.bridge.bridge-nf-chamada-ip6tables
 
 Edite o arquivo `/etc/neutron/l3_agent.ini`
 ~~~
-sudo vim /etc/neutron/l3_agent.ini
+vim /etc/neutron/l3_agent.ini
 ~~~
 
 ~~~
@@ -979,7 +987,7 @@ interface_driver = linuxbridge
 
 Edite o arquivo `/etc/neutron/dhcp_agent.ini`
 ~~~
-sudo vim /etc/neutron/dhcp_agent.ini
+vim /etc/neutron/dhcp_agent.ini
 ~~~
 
 ~~~
@@ -993,7 +1001,7 @@ enable_isolated_metadata = true
 
 Edite o arquivo `/etc/neutron/metadata_agent.ini` 
 ~~~
-sudo vim /etc/neutron/metadata_agent.ini
+vim /etc/neutron/metadata_agent.ini
 ~~~
 
 ~~~
@@ -1006,7 +1014,7 @@ metadata_proxy_shared_secret = METADATA_SECRET
 #### Configure o serviço do Compute para usar o serviço de rede
 Edite o arquivo `/etc/nova/nova.conf`
 ~~~
-sudo vim /etc/nova/nova.conf
+vim /etc/nova/nova.conf
 ~~~
 
 ~~~
@@ -1060,7 +1068,7 @@ apt install openstack-dashboard
 
 Edite o arquivo `/etc/openstack-dashboard/local_settings.py`
 ~~~
-sudo vim /etc/openstack-dashboard/local_settings.py
+vim /etc/openstack-dashboard/local_settings.py
 ~~~
 ~~~
 OPENSTACK_HOST = "controller"
@@ -1115,7 +1123,7 @@ TIME_ZONE = "TIME_ZONE"
 
 Edite o arquivo `/etc/apache2/conf-available/openstack-dashboard.conf`
 ~~~
-sudo vim /etc/apache2/conf-available/openstack-dashboard.conf 
+vim /etc/apache2/conf-available/openstack-dashboard.conf 
 ~~~
 
 Inclua a seguinte linha
@@ -1146,7 +1154,7 @@ vgcreate cinder-volumes /dev/sdb
 
 Edite o arquivo `/etc/lvm/lvm.conf` 
 ~~~
-sudo vim /etc/lvm/lvm.conf 
+vim /etc/lvm/lvm.conf 
 ~~~
 ~~~
 devices {
@@ -1161,7 +1169,7 @@ apt install cinder-volume
 
 Edite o arquivo `/etc/cinder/cinder.conf` 
 ~~~
-sudo vim /etc/cinder/cinder.conf 
+vim /etc/cinder/cinder.conf 
 ~~~
 ~~~
 [database]
@@ -1236,7 +1244,7 @@ apt install cinder-api cinder-scheduler
 
 Edite o arquivo `/etc/cinder/cinder.conf`
 ~~~
-sudo vim /etc/cinder/cinder.conf
+vim /etc/cinder/cinder.conf
 ~~~
 
 ~~~
@@ -1270,7 +1278,7 @@ su -s /bin/sh -c "cinder-manage db sync" cinder
 #### Configure compute para usar o armazenamento em Bloco
 Edite o arquivo `etc/nova/nova.conf`
 ~~~
-sudo vim etc/nova/nova.conf
+vim etc/nova/nova.conf
 ~~~
 
 ~~~
@@ -1293,7 +1301,7 @@ apt install cinder-backup
 
 Edite o arquivo  `/etc/cinder/cinder.conf` 
 ~~~
-sudo vim  /etc/cinder/cinder.conf 
+vim  /etc/cinder/cinder.conf 
 ~~~
 
 ~~~
