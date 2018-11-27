@@ -192,21 +192,17 @@ apt install python-openstackclient
 ~~~
 
 ### [SQL Database](https://docs.openstack.org/install-guide/environment-sql-database-ubuntu.html)
-
 A documentação do **Openstack Queens**, apresenta e utiliza o banco de dados MariaDB, porém para estudo foi utilizado o Mysql.
 O tutorial apresenta guia dos dois banco de dados.    
 >>*Execute os comandos que desejar (MariaDB ou Mysql) no* **Controller**. 
 
 #### Mariadb
+1. Instale os pacotes:
 ~~~
 apt install mariadb-server python-pymysql
 ~~~
 
-Crie e edite o arquivo `/etc/mysql/mariadb.conf.d/99-openstack.cnf`  
-~~~
-vim /etc/mysql/mariadb.conf.d/99-openstack.cnf
-~~~
-
+2. Crie e edite o arquivo `/etc/mysql/mariadb.conf.d/99-openstack.cnf`  
 ~~~ 
 [mysqld]
 bind-address = 10.0.0.11
@@ -218,62 +214,72 @@ collation-server = utf8_general_ci
 character-set-server = utf8
 ~~~
 
-Finalize a instalação 
+3. Reinicie o serviço de banco de dados, e escolha uma senha segura: 
 ~~~
 service mysql restart
 mysql_secure_installation
 ~~~
 
-### Mysql
+#### Mysql
+
+1. Instale os pacotes:
 ~~~
 apt-get install mysql-server python-pymysql
+~~~
+
+2. Reinicie o serviço de banco de dados:
+~~~
 service mysql restart
 ~~~
 
 ### [Mensagem Queue](https://docs.openstack.org/install-guide/environment-messaging-ubuntu.html)
 >>*Execute os comandos no* **Controller**.  
 
+1. Instale o pacote:
 ~~~
 apt install rabbitmq-server
-systemctl enable rabbitmq-server.service
-systemctl start rabbitmq-server.service
+~~~
+
+2. Adicione o usuário **openstack** e permita configuração, gravação e acesso de leitura:
+~~~
 rabbitmqctl add_user openstack senha
 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
+~~~
+
+3. Restarte o serviço rabbitmq
+~~~
+systemctl enable rabbitmq-server.service
+systemctl start rabbitmq-server.service
 ~~~
 
 ### [Memcached](https://docs.openstack.org/install-guide/environment-memcached.html)
 >>*Execute os comandos no* **Controller**.  
 
+1. Instale o pacote:
 ~~~
 apt install memcached python-memcache
 ~~~
 
-Edite o arquivo `/etc/memcached.conf`
-~~~
-vim /etc/memcached.conf
-~~~  
-
+2. Edite o arquivo `/etc/memcached.conf`.
 ~~~
 -l 10.0.0.11
 ~~~
+>>Altere a linha que possue o comando `-l 127.0.0.1`  
 
-Altere a linha que possue o comando `-l 127.0.0.1`  
-
-Restarte o serviço  
+3. Restarte o serviço:  
 ~~~
 service memcached restart
 ~~~
 
 ### [ETCD](https://docs.openstack.org/install-guide/environment-etcd-ubuntu.html)
+>>*Execute os comandos no* **Controller**.  
+
+1. Instale o pacote:
 ~~~
 apt install etcd
 ~~~
 
-Edite o arquivo `/etc/default/etcd`  
-~~~
-vim /etc/default/etcd
-~~~
-
+2. Edite o arquivo `/etc/default/etcd`  
 ~~~
 ETCD_NAME="controller"
 ETCD_DATA_DIR="/var/lib/etcd"
@@ -286,28 +292,29 @@ ETCD_LISTEN_PEER_URLS="http://0.0.0.0:2380"
 ETCD_LISTEN_CLIENT_URLS="http://10.0.0.11:2379"
 ~~~
 
-Ative o serviço ETCD  
+3. Ative e inicie o serviço do etcd:  
 ~~~
 systemctl enable etcd
 systemctl start etcd
 ~~~
 
 ### [Instalação de Serviços OpenStack](https://docs.openstack.org/install-guide/openstack-services.html)
-* A seguir é apresentado os 4 principais serviços para implantação minima do Openstack na versão Queens, com mais dois serviços aconselháveis.  
+No mínimo, você precisa instalar os seguintes serviços. Instale os serviços na ordem especificada abaixo:  
 * Serviço de Identidade - instalação do **keystone**.  
 * Serviço de Imagem - instalação do **glance**   
 * Serviço de Computação - instalação do **nova**   
 * Serviço de Rede - instalação de **neutron**  
 
-Demais serviços:  
+Aconselhamos também instalar os seguintes componentes depois de instalar os serviços de implantação mínimos: 
 * Dashboard - instalação do **horizon**  
 * Serviço de armazenamento em bloco - instalação do **cinder**
 
 ### [Serviço de Identidade](https://docs.openstack.org/keystone/queens/install/)
-#### Tutorial de instalação do keystone
 >>*Execute os comandos no* **Controller**  
 
-Acesse o banco de dados
+#### Pré-requisitos
+
+1. Acesse e crie um banco de dados para **keystone**:
 ~~~
 mysql -u root -psenha
 
@@ -318,32 +325,34 @@ exit;
 ~~~
 
 #### Instalar e configurar componentes
+1. Instale os pacotes: 
 ~~~
 apt install keystone  apache2 libapache2-mod-wsgi
 ~~~
 
-Configure o arquivo `/etc/keystone/keystone.conf`
-~~~
-vim /etc/keystone/keystone.conf
-~~~
-
+2. Configure o arquivo `/etc/keystone/keystone.conf`
 ~~~
 [database]
-connection = mysql+pymysql://keystone:KEYSTONE_DBPASS@controller/keystone
+connection = mysql+pymysql://keystone:senha@controller/keystone
 
 [token]
 provider = fernet
 ~~~
+>>*Comente ou remova quaisquer outras opções na seção [database].*
 
-Execute os comandos
+3. Preencha o banco de dados do serviço de identidade:
 ~~~
 su -s /bin/sh -c "keystone-manage db_sync" keystone
 ~~~
 
+4. Inicialize os repositórios de keys:
 ~~~
 keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone  
 keystone-manage credential_setup --keystone-user keystone --keystone-group keystone  
+~~~
 
+5. Inicialize o serviço de identidade:
+~~~
 keystone-manage bootstrap --bootstrap-password senha \
   --bootstrap-admin-url http://controller:5000/v3/ \
   --bootstrap-internal-url http://controller:5000/v3/ \
@@ -351,22 +360,18 @@ keystone-manage bootstrap --bootstrap-password senha \
   --bootstrap-region-id RegionOne
 ~~~
 
-### Configure o servidor Apache HTTP
-Edite o arquivo `/etc/apache2/apache2.conf`
-~~~
-vim /etc/apache2/apache2.conf
-~~~
-
+#### Configure o servidor Apache HTTP
+1. Edite o arquivo `/etc/apache2/apache2.conf`
 ~~~
 ServerName controller
 ~~~
 
-Restart o serviço apache
+2. Restart o serviço apache
 ~~~
 service apache2 restart
 ~~~
 
-Configure a conta de administração
+3. Configure a conta de administração
 ~~~
 export OS_USERNAME=admin
 export OS_PASSWORD=senha
