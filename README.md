@@ -220,7 +220,7 @@ service mysql restart
 apt install rabbitmq-server
 systemctl enable rabbitmq-server.service
 systemctl start rabbitmq-server.service
-rabbitmqctl add_user openstack RABBIT_PASS
+rabbitmqctl add_user openstack senha
 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 ~~~
 
@@ -327,7 +327,7 @@ su -s /bin/sh -c "keystone-manage db_sync" keystone
 keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone  
 keystone-manage credential_setup --keystone-user keystone --keystone-group keystone  
 
-keystone-manage bootstrap --bootstrap-password ADMIN_PASS \
+keystone-manage bootstrap --bootstrap-password senha \
   --bootstrap-admin-url http://controller:5000/v3/ \
   --bootstrap-internal-url http://controller:5000/v3/ \
   --bootstrap-public-url http://controller:5000/v3/ \
@@ -352,7 +352,7 @@ service apache2 restart
 Configure a conta de administração
 ~~~
 export OS_USERNAME=admin
-export OS_PASSWORD=ADMIN_PASS
+export OS_PASSWORD=senha
 export OS_PROJECT_NAME=admin
 export OS_USER_DOMAIN_NAME=Default
 export OS_PROJECT_DOMAIN_NAME=Default
@@ -400,7 +400,7 @@ export OS_PROJECT_DOMAIN_NAME=Default
 export OS_USER_DOMAIN_NAME=Default
 export OS_PROJECT_NAME=admin
 export OS_USERNAME=admin
-export OS_PASSWORD=ADMIN_PASS
+export OS_PASSWORD=senha
 export OS_AUTH_URL=http://controller:5000/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
@@ -416,7 +416,7 @@ export OS_PROJECT_DOMAIN_NAME=Default
 export OS_USER_DOMAIN_NAME=Default
 export OS_PROJECT_NAME=demo
 export OS_USERNAME=demo
-export OS_PASSWORD=DEMO_PASS
+export OS_PASSWORD=senha
 export OS_AUTH_URL=http://controller:5000/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
@@ -472,7 +472,7 @@ project_domain_name = Default
 user_domain_name = Default
 project_name = service
 username = glance
-password = GLANCE_PASS
+password = senha
 
 [paste_deploy]
 flavor = keystone
@@ -482,7 +482,7 @@ stores = file,http
 default_store = file
 filesystem_store_datadir = /var/lib/glance/images/
 ~~~
->> Comente ou remova demais opções em [keystone_authtoken]  
+>>*Comente ou remova demais opções da seção* `[keystone_authtoken]`  
 
 Edite o arquivo `/etc/glance/glance-registry.conf`   
 ~~~
@@ -498,7 +498,7 @@ project_domain_name = Default
 user_domain_name = Default
 project_name = service
 username = glance
-password = GLANCE_PASS
+password = senha
 
 [paste_deploy]
 flavor = keystone
@@ -578,7 +578,7 @@ connection = mysql+pymysql://nova:NOVA_DBPASS@controller/nova_api
 connection = mysql+pymysql://nova:NOVA_DBPASS@controller/nova
 
 [DEFAULT]
-transport_url = rabbit://openstack:RABBIT_PASS@controller
+transport_url = rabbit://openstack:senha@controller
 my_ip = 10.0.0.11
 use_neutron = True
 firewall_driver = nova.virt.firewall.NoopFirewallDriver
@@ -594,7 +594,7 @@ project_domain_name = default
 user_domain_name = default
 project_name = service
 username = nova
-password = NOVA_PASS
+password = senha
 
 [vnc]
 enabled = true
@@ -615,9 +615,9 @@ auth_type = password
 user_domain_name = Default
 auth_url = http://controller:5000/v3
 username = placement
-password = PLACEMENT_PASS
+password = senha
 ~~~
->> Comente ou remova demais opções em [keystone_authtoken]  
+>>*Comente ou remova demais opções da seção* `[keystone_authtoken]`   
 
 Execute os comandos
 ~~~
@@ -650,7 +650,7 @@ sudo vim etc/nova/nova.conf
 
 ~~~
 [DEFAULT]
-transport_url = rabbit://openstack:RABBIT_PASS@controller
+transport_url = rabbit://openstack:senha@controller
 my_ip = MANAGEMENT_INTERFACE_IP_ADDRESS
 use_neutron = True
 firewall_driver = nova.virt.firewall.NoopFirewallDriver
@@ -666,7 +666,7 @@ project_domain_name = default
 user_domain_name = default
 project_name = service
 username = nova
-password = NOVA_PASS
+password = senha
 
 [vnc]
 enabled = True
@@ -688,10 +688,10 @@ auth_type = password
 user_domain_name = Default
 auth_url = http://controller:5000/v3
 username = placement
-password = PLACEMENT_PASS
+password = senha
 ~~~
->> Comente ou remova demais opções da seção [keystone_authtoken]   
->> Remova a opção **log_dir** da seção [DEFAULT]  
+>>*Comente ou remova demais opções da seção* `[keystone_authtoken]`  
+>>*Remova a opção* **log_dir** *da seção* `[DEFAULT]`  
 
 Finalize a instalação
 ~~~
@@ -771,7 +771,7 @@ connection = mysql+pymysql://neutron:NEUTRON_DBPASS@controller/neutron
 [DEFAULT]
 core_plugin = ml2
 service_plugins =
-transport_url = rabbit://openstack:RABBIT_PASS@controller
+transport_url = rabbit://openstack:senha@controller
 auth_strategy = keystone
 notify_nova_on_port_status_changes = true
 notify_nova_on_port_data_changes = true
@@ -785,7 +785,7 @@ project_domain_name = default
 user_domain_name = default
 project_name = service
 username = neutron
-password = NEUTRON_PASS
+password = senha
 
 [nova]
 auth_url = http://controller:5000
@@ -795,9 +795,9 @@ user_domain_name = default
 region_name = RegionOne
 project_name = service
 username = nova
-password = NOVA_PASS
+password = senha
 ~~~
->> Comente ou remova demais opções da seção [keystone_authtoken]  
+>>*Comente ou remova demais opções da seção* `[keystone_authtoken]`  
 
 #### Configure o Plug-in modeular Layer 2 (ML2)
 Edite o arquivo `/etc/neutron/plugins/ml2/ml2_conf.ini`
@@ -874,7 +874,7 @@ connection = mysql+pymysql://neutron:NEUTRON_DBPASS@controller/neutron
 core_plugin = ml2
 service_plugins = router
 allow_overlapping_ips = true
-transport_url = rabbit://openstack:RABBIT_PASS@controller
+transport_url = rabbit://openstack:senha@controller
 auth_strategy = keystone
 notify_nova_on_port_status_changes = true
 notify_nova_on_port_data_changes = true
@@ -889,7 +889,7 @@ project_domain_name = default
 user_domain_name = default
 project_name = service
 username = neutron
-password = NEUTRON_PASS
+password = senha
 
 [nova]
 auth_url = http://controller:5000
@@ -899,9 +899,9 @@ user_domain_name = default
 region_name = RegionOne
 project_name = service
 username = nova
-password = NOVA_PASS
+password = senha
 ~~~
->> Comente ou remova demais opções da seção [keystone_authtoken]  
+>>*Comente ou remova demais opções da seção* `[keystone_authtoken]` 
 
 #### Configure o Plug-in modeular Layer 2 (ML2)
 
@@ -1010,7 +1010,7 @@ user_domain_name = default
 region_name = RegionOne
 project_name = service
 username = neutron
-password = NEUTRON_PASS
+password = senha
 service_metadata_proxy = true
 metadata_proxy_shared_secret = METADATA_SECRET
 ~~~
@@ -1080,8 +1080,8 @@ OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = "Default"
 
 OPENSTACK_KEYSTONE_DEFAULT_ROLE = "user"
 ~~~
-- Não edite o parâmetro **ALLOWED_HOSTS**0 na seção de configuração do Ubuntu.  
-- ALLOWED_HOSTS também pode ser ['*'] para aceitar todos os hosts. Isso pode ser útil para o trabalho de desenvolvimento, mas é potencialmente inseguro e não deve ser usado na produção. 
+- Não edite o parâmetro **ALLOWED_HOSTS** na seção de configuração do Ubuntu.  
+- **ALLOWED_HOSTS** também pode ser ['*'] para aceitar todos os hosts. Isso pode ser útil para o trabalho de desenvolvimento, mas é potencialmente inseguro e não deve ser usado na produção. 
 >> Comente qualquer outra configuração de armazenamento de sessão.  
 
 Caso tenha escolhido a opção de Rede 1, desative o suporte para Layer-3 do serviço de Rede:
@@ -1118,7 +1118,7 @@ WSGIApplicationGroup %{GLOBAL}
 service apache2 reload
 
 ### [Verificando Operação](https://docs.openstack.org/horizon/queens/install/verify-ubuntu.html)
-Acesse o painel usando um navegador Web em http://controller/horizon
+Acesse o painel usando um navegador Web em http://controller/horizon.  
 Acesse usando **admin** ou **demo user** e credenciais **default** de domínio.
 
 ### [Serviço de Armazenamento de Bloco](https://docs.openstack.org/cinder/queens/install/)
@@ -1159,7 +1159,7 @@ sudo vim /etc/cinder/cinder.conf
 connection = mysql+pymysql://cinder:CINDER_DBPASS@controller/cinder
 
 [DEFAULT]
-transport_url = rabbit://openstack:RABBIT_PASS@controller
+transport_url = rabbit://openstack:senha@controller
 auth_strategy = keystone
 my_ip = 10.0.0.41
 enabled_backends = lvm
@@ -1174,7 +1174,7 @@ project_domain_id = default
 user_domain_id = default
 project_name = service
 username = cinder
-password = CINDER_PASS
+password = senha
 
 [lvm]
 volume_driver = cinder.volume.drivers.lvm.LVMVolumeDriver
@@ -1185,7 +1185,7 @@ iscsi_helper = tgtadm
 [oslo_concurrency]
 lock_path = /var/lib/cinder/tmp
 ~~~
->> Comente ou remova outras opções a seção [keystone-authtoken]
+>>*Comente ou remova demais opções da seção* `[keystone_authtoken]`
 
 #### Finalize a instalação
 ~~~
@@ -1235,7 +1235,7 @@ sudo vim /etc/cinder/cinder.conf
 connection = mysql+pymysql://cinder:CINDER_DBPASS@controller/cinder
 
 [DEFAULT]
-transport_url = rabbit://openstack:RABBIT_PASS@controller
+transport_url = rabbit://openstack:senha@controller
 auth_strategy = keystone
 my_ip = 10.0.0.11
 
@@ -1248,7 +1248,7 @@ project_domain_id = default
 user_domain_id = default
 project_name = service
 username = cinder
-password = CINDER_PASS
+password = senha
 
 [oslo_concurrency]
 lock_path = /var/lib/cinder/tmp
