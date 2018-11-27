@@ -1451,7 +1451,7 @@ openstack volume service list
 ~~~
 ***
 
-## Finalizando Instalação Ironic
+## [Finalizando Instalação Ironic](https://docs.openstack.org/ironic/queens/install/install-ubuntu.html)
 1. Configurando o banco de dados:
 ~~~
 mysql -u root -psenha
