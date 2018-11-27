@@ -1,40 +1,38 @@
 # Instalação do OpenStack
- Este documento apresenta os links conforme foi implementado passo a passo a instalação do **Openstack Ironic** e **Openstack Kolla-Ansible**.
+Este documento apresenta os links conforme foi implementado passo a passo a instalação do [**Openstack Ironic**](https://docs.openstack.org/ironic/latest/) e [**Openstack Kolla-Ansible**](https://docs.openstack.org/kolla-ansible/latest/).
 
-### Guia de Instalação do OpenStack
-Toda documentação foi feita apartir do Guia de Instalação, a versão utilizada foi a  [**queens**](https://www.openstack.org/software/queens/).  
-Guia instalação: https://docs.openstack.org/install-guide/  
+## Guia de Instalação do OpenStack
+Toda documentação foi feita a partir do [Guia de Instalação](https://docs.openstack.org/install-guide/), a versão utilizada foi a  [**queens**](https://www.openstack.org/software/queens/).  
 
-## Máquina Servidor
+
+### Máquina Servidor
 Para instalação de Openstack, foi utilizado um servidor com as seguintes configurações:  
-**Configurações de Hardware**:  
-Processador: 8 Nucleos; Memória: 16 GB; HD: 1TB.  
-**Configurações de Software**:  
-Sistema: Ubuntu 16.04  
+**Configurações de Hardware**: Processador: 8 Nucleos; Memória: 16 GB; HD: 1TB.  
+**Configurações de Software**: Sistema: Ubuntu 16.04    
+**Programas utilizados**: 
+VirtualBox - Versão 5.2.22 r126460 (Qt5.6.1).  
+                      Vagrant - Versão 2.2.1                            
 
-Programas utilizados: VirtualBox - Versão 5.2.22 r126460 (Qt5.6.1).  
-                      Vagrant - Versão 2.2.1                                    
+>>*Toda instalação de ambiente foi através de acesso SSH -X*.
 
-*Toda instalação de ambiente foi através de acesso SSH -X*.
-
-## [Ambientes criados no VirtualBox/Vagrant](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md)
+### [Ambientes criados no VirtualBox/Vagrant](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md)
 Para ambos situações de criações de VMs, utilizando o [**VAGRANT**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md) ou o [**VIRTUALBOX**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md), basta acessar o link e seguir os passos apresentados:
 
-**Controller**
-Config: Memória: 10240 mb, Proc: 4 Nucleos, HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
-**Compute/Block**
-Config: Memória: 10240 mb, Proc: 4 Nucleos, HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
+**Configurações das VMs: Controller/Compute/Block:**  
+Memória: 10240 mb, Proc: 4 Nucleos, HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
 
-## Configuração de Rede do Ambiente
-### [Controller](https://docs.openstack.org/install-guide/environment-networking-controller.html)
+### [Configuração de Rede do Ambiente](https://docs.openstack.org/install-guide/environment-networking.html)
+![Plano de Rede](https://docs.openstack.org/install-guide/_images/networklayout.png)
 
-Configuração de interface da *máquina controller*.  
+#### [Controller](https://docs.openstack.org/install-guide/environment-networking-controller.html)
+Configuração de interface da máquina **controller**.  
+~~~
         IP address: 10.0.0.11  
         Network mask: 255.255.255.0 (or /24)  
         Default gateway: 10.0.0.1  
+~~~
 
 Configure a interface de rede editando o arquivo `/etc/network/interfaces`
-
 ~~~
 auto enp0s3
 iface enp0s3 inet manual
@@ -49,24 +47,33 @@ iface enp0s8 inet dhcp
 
 Edite o arquivo `/etc/hosts`
 ~~~
-127.0.0.1       localhost
-#127.0.1.1       controller
-controller
-10.0.0.11       controller
-compute1
-10.0.0.31       compute1
-block1
-10.0.0.41       block1
+sudo vim /etc/hosts
 ~~~
 
-### [Compute](https://docs.openstack.org/install-guide/environment-networking-compute.html)
+~~~
+127.0.0.1       localhost
+#127.0.1.1       controller
 
-Configuração de interface da *máquina compute* 
+controller
+10.0.0.11       controller
+compute
+10.0.0.31       compute
+block
+10.0.0.41       block
+~~~
+
+#### [Compute](https://docs.openstack.org/install-guide/environment-networking-compute.html)
+Configuração de interface da máquina **compute**.  
+~~~
         IP address: 10.0.0.31
         Network mask: 255.255.255.0 (or /24)
         Default gateway: 10.0.0.1
+~~~
 
 Configure a interface de rede editando o arquivo `/etc/network/interfaces`
+~~~
+sudo vim /etc/network/interfaces
+~~~
 
 ~~~
 auto enp0s3
@@ -82,66 +89,82 @@ iface enp0s8 inet dhcp
 
 Edite o arquivo `/etc/hosts`
 ~~~
-127.0.0.1       localhost
-#127.0.1.1       compute
-controller
-10.0.0.11       controller
-compute1
-10.0.0.31       compute1
-block1
-10.0.0.41       block1
+sudo vim /etc/hosts
 ~~~
 
-### [Block](https://docs.openstack.org/install-guide/environment-networking-storage-cinder.html)
+~~~
+127.0.0.1       localhost
+#127.0.1.1       compute
+
+controller
+10.0.0.11       controller
+compute
+10.0.0.31       compute
+block
+10.0.0.41       block
+~~~
+
+#### [Block](https://docs.openstack.org/install-guide/environment-networking-storage-cinder.html)
 Configuração de interface da máquina **Block**  
 >>*Mesmos passos anteriores, alterando apenas o valor final do endereço IP para o valor 41* 
 
-## [Verificação de Connectiividade](https://docs.openstack.org/install-guide/environment-networking-verify.html)
+### [Verificação de conectividade](https://docs.openstack.org/install-guide/environment-networking-verify.html)
 ~~~
 ping -c 4 controller  
-ping -c 4 compute1  
-ping -c 4 block1  
+ping -c 4 compute  
+ping -c 4 block  
 ~~~
 
-# [Network Time Protocol (NTP)](https://docs.openstack.org/install-guide/environment-ntp.html)
-## Instalação e Configuração de componentes
 
-### [Controller](https://docs.openstack.org/install-guide/environment-ntp-controller.html)
+### [Network Time Protocol (NTP)](https://docs.openstack.org/install-guide/environment-ntp.html)
+#### Instalação e configuração de componentes
+
+#### [Controller](https://docs.openstack.org/install-guide/environment-ntp-controller.html)
 ~~~
 apt install chrony  
+~~~
 
-/etc/chrony/chrony.conf   
+Edite o arquivo `/etc/chrony/chrony.conf`   
+~~~
+sudo vim /etc/chrony/chrony.conf
+~~~
+
+~~~
 server NTP_SERVER iburst  
 allow 10.0.0.0/24
 ~~~
-
->> colocar endereço de NTP_SERVER válido  
+>>*colocar endereço de NTP_SERVER válido*  
 
 ~~~
 service chrony restart
 ~~~
 
-### [Outros Nós](https://docs.openstack.org/install-guide/environment-ntp-other.html)
+#### [Outros Nós](https://docs.openstack.org/install-guide/environment-ntp-other.html)
 ~~~
 apt install chrony
+~~~
 
-/etc/chrony/chrony.conf
+Edite o arquivo `/etc/chrony/chrony.conf`
+~~~
+sudo vim /etc/chrony/chrony.conf
+~~~
+
+~~~
 server controller iburst
 service chrony restart
 ~~~
-
->>Comente a linha  pool 2.debian.pool.ntp.org offline iburst  
+>>*Comente a linha  pool 2.debian.pool.ntp.org offline iburst*   
 
 ### Verificando Operação
->>Execute em todas máquinas o comando
+Execute em todas máquinas o comando.  
 ~~~
 chronyc sources  
 ~~~
 
-# [Instalação de Pacotes OpenStack no Ubuntu (Versão Queens)](https://docs.openstack.org/install-guide/environment-packages-ubuntu.html)
+## [Instalação de Pacotes OpenStack no Ubuntu (Versão Queens)](https://docs.openstack.org/install-guide/environment-packages-ubuntu.html)
 OpenStack Queens for Ubuntu 16.04 LTS:  
 ~~~
-echo Y|apt install software-properties-common  
+apt install software-properties-common  
 add-apt-repository cloud-archive:queens  
 ~~~
 
@@ -151,17 +174,18 @@ apt update && apt dist-upgrade
 apt install python-openstackclient  
 ~~~
 
-# [SQL Database](https://docs.openstack.org/install-guide/environment-sql-database-ubuntu.html)
+### [SQL Database](https://docs.openstack.org/install-guide/environment-sql-database-ubuntu.html)
 
-A documentação do **Openstack Queens**, apresenta e utiliza o banco de dados MariaDB, porém para estudo foi utilizado o Mysql.  
->>Execute os comandos que desejar (MariaDB ou Mysql) no **Controller**. 
+A documentação do **Openstack Queens**, apresenta e utiliza o banco de dados MariaDB, porém para estudo foi utilizado o Mysql.
+O tutorial apresenta guia dos dois banco de dados.    
+>>*Execute os comandos que desejar (MariaDB ou Mysql) no* **Controller**. 
 
-### Mariadb
+#### Mariadb
 ~~~
 apt install mariadb-server python-pymysql
 ~~~
 
-Crie e edite o arquivo /etc/mysql/mariadb.conf.d/99-openstack.cnf  
+Crie e edite o arquivo `/etc/mysql/mariadb.conf.d/99-openstack.cnf`  
 ~~~
 vim /etc/mysql/mariadb.conf.d/99-openstack.cnf
 ~~~
@@ -177,7 +201,7 @@ collation-server = utf8_general_ci
 character-set-server = utf8
 ~~~
 
-Finalize a instalação.  
+Finalize a instalação 
 ~~~
 service mysql restart
 mysql_secure_installation
@@ -189,8 +213,8 @@ apt-get install mysql-server python-pymysql
 service mysql restart
 ~~~
 
-# [Mensagem Queue](https://docs.openstack.org/install-guide/environment-messaging-ubuntu.html)
->>Execute os comandos no **Controller**.  
+### [Mensagem Queue](https://docs.openstack.org/install-guide/environment-messaging-ubuntu.html)
+>>*Execute os comandos no* **Controller**.  
 
 ~~~
 apt install rabbitmq-server
@@ -200,14 +224,14 @@ rabbitmqctl add_user openstack RABBIT_PASS
 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 ~~~
 
-# [Memcached](https://docs.openstack.org/install-guide/environment-memcached.html)
->>Execute os comandos no **Controller**.  
+### [Memcached](https://docs.openstack.org/install-guide/environment-memcached.html)
+>>*Execute os comandos no* **Controller**.  
 
 ~~~
 apt install memcached python-memcache
 ~~~
 
-Edite o arquivo /etc/memcached.conf
+Edite o arquivo `/etc/memcached.conf`
 ~~~
 vim /etc/memcached.conf
 ~~~  
@@ -216,18 +240,19 @@ vim /etc/memcached.conf
 -l 10.0.0.11
 ~~~
 
-Altere a linha que possue o comando *-l 127.0.0.1*  
-Restarte o serviço.  
+Altere a linha que possue o comando `-l 127.0.0.1`  
+
+Restarte o serviço  
 ~~~
 service memcached restart
 ~~~
 
-# [ETCD](https://docs.openstack.org/install-guide/environment-etcd-ubuntu.html)
+### [ETCD](https://docs.openstack.org/install-guide/environment-etcd-ubuntu.html)
 ~~~
 apt install etcd
 ~~~
 
-Edite o arquivo /etc/default/etcd  
+Edite o arquivo `/etc/default/etcd`  
 ~~~
 sudo vim /etc/default/etcd
 ~~~
@@ -250,21 +275,22 @@ systemctl enable etcd
 systemctl start etcd
 ~~~
 
-# [Instalação de Serviços OpenStack](https://docs.openstack.org/install-guide/openstack-services.html)
+### [Instalação de Serviços OpenStack](https://docs.openstack.org/install-guide/openstack-services.html)
 * A seguir é apresentado os 4 principais serviços para implantação minima do Openstack na versão Queens, com mais dois serviços aconselháveis.  
 * Serviço de Identidade - instalação do **keystone**.  
 * Serviço de Imagem - instalação do **glance**   
 * Serviço de Computação - instalação do **nova**   
-* Serviço de Rede - instalação de **neutron**   
+* Serviço de Rede - instalação de **neutron**  
+
 Demais serviços:  
 * Dashboard - instalação do **horizon**  
 * Serviço de armazenamento em bloco - instalação do **cinder**
 
-# [Serviço de Identidade](https://docs.openstack.org/keystone/queens/install/)
-###Tutorial de instalação do keystone
->>Execute os comandos no **Controller**.
-acesse o banco de dados.
+### [Serviço de Identidade](https://docs.openstack.org/keystone/queens/install/)
+#### Tutorial de instalação do keystone
+>>*Execute os comandos no* **Controller**  
 
+Acesse o banco de dados
 ~~~
 mysql -u root -psenha
 
@@ -274,12 +300,12 @@ GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'senha';
 exit;
 ~~~
 
-### Instalar e configurar componentes
+#### Instalar e configurar componentes
 ~~~
 apt install keystone  apache2 libapache2-mod-wsgi
 ~~~
 
-Configure o arquivo /etc/keystone/keystone.conf
+Configure o arquivo `/etc/keystone/keystone.conf`
 ~~~
 sudo vim /etc/keystone/keystone.conf
 ~~~
@@ -287,11 +313,12 @@ sudo vim /etc/keystone/keystone.conf
 ~~~
 [database]
 connection = mysql+pymysql://keystone:KEYSTONE_DBPASS@controller/keystone
+
 [token]
 provider = fernet
 ~~~
 
->>Execute o comando.
+Execute os comandos
 ~~~
 su -s /bin/sh -c "keystone-manage db_sync" keystone
 ~~~
@@ -308,7 +335,7 @@ keystone-manage bootstrap --bootstrap-password ADMIN_PASS \
 ~~~
 
 ### Configure o servidor Apache HTTP
-Edite o arquivo /etc/apache2/apache2.conf
+Edite o arquivo `/etc/apache2/apache2.conf`
 ~~~
 sudo vim /etc/apache2/apache2.conf
 ~~~
@@ -317,12 +344,12 @@ sudo vim /etc/apache2/apache2.conf
 ServerName controller
 ~~~
 
-Finalize a instalação.
+Restart o serviço apache
 ~~~
 service apache2 restart
 ~~~
 
-Configure a conta de administração.
+Configure a conta de administração
 ~~~
 export OS_USERNAME=admin
 export OS_PASSWORD=ADMIN_PASS
@@ -333,8 +360,8 @@ export OS_AUTH_URL=http://controller:5000/v3
 export OS_IDENTITY_API_VERSION=3
 ~~~
 
-### [Criando dominio, projeto, usuario e papeis](https://docs.openstack.org/keystone/queens/install/keystone-users-ubuntu.html)
->>Execute os comandos abaixo no **controller**.
+### [Criando domínio, projeto, usuário e papéis](https://docs.openstack.org/keystone/queens/install/keystone-users-ubuntu.html)
+>>Execute os comandos abaixo no **controller**.  
 ~~~
 openstack domain create --description "An Example Domain" example
 openstack project create --domain default --description "Service Project" service
@@ -344,7 +371,7 @@ openstack role create user
 openstack role add --project demo --user demo user
 ~~~
 
-### Verificando as operações
+#### Verificando as operações
 ~~~
 unset OS_AUTH_URL OS_PASSWORD
 ~~~
@@ -361,12 +388,13 @@ openstack --os-auth-url http://controller:5000/v3 \
   --os-project-name demo --os-username demo token issue
 ~~~
 
-### Criando scripts do ambiente do cliente Openstack
-Criando os arquivos **admin-openrc** e **demon-openrc**.
+#### Criando scripts do ambiente do cliente Openstack
+Criando os arquivos `admin-openrc` e `demon-openrc`.
 ~~~
 sudo vim admin-openrc
 ~~~
 
+Edite o arquivo admin-openrc
 ~~~
 export OS_PROJECT_DOMAIN_NAME=Default
 export OS_USER_DOMAIN_NAME=Default
@@ -382,6 +410,7 @@ export OS_IMAGE_API_VERSION=2
 sudo vim demon-openrc
 ~~~
 
+Edite o arquivo demon-openrc
 ~~~
 export OS_PROJECT_DOMAIN_NAME=Default
 export OS_USER_DOMAIN_NAME=Default
@@ -396,27 +425,22 @@ export OS_IMAGE_API_VERSION=2
 Utilizando os scripts 
 ~~~
 . admin-openrc
+. demon-openrc
 ~~~
 
 ~~~
 openstack token issue
 ~~~
 
-# [Serviço de Image](https://docs.openstack.org/glance/queens/install/)
-### Instalação e Configuração
->>Execute os comandos abaixo no **controller**.  
-
+## [Serviço de Image](https://docs.openstack.org/glance/queens/install/)
+#### Instalação e Configuração
+>>Execute os comandos abaixo no **controller**  
 ~~~
 mysql -u root -psenha
 CREATE DATABASE glance;
 GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'localhost' IDENTIFIED BY 'GLANCE_DBPASS';
 GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' IDENTIFIED BY 'GLANCE_DBPASS';
 exit;
-~~~
-
->>Execute o admin-openrc  
-~~~
-. admin-openrc
 ~~~
 
 Crie as credenciais de Glance com os comandos abaixos
@@ -434,7 +458,7 @@ openstack endpoint create --region RegionOne image admin http://localhost:9292
 apt install glance
 ~~~
 
-Edite o arquivo /etc/glance/glance-api.conf  
+Edite o arquivo `/etc/glance/glance-api.conf`  
 ~~~
 [database]
 connection = mysql+pymysql://glance:GLANCE_DBPASS@controller/glance
@@ -460,7 +484,7 @@ filesystem_store_datadir = /var/lib/glance/images/
 ~~~
 >> Comente ou remova demais opções em [keystone_authtoken]  
 
-Edite o arquivo /etc/glance/glance-registry.conf   
+Edite o arquivo `/etc/glance/glance-registry.conf`   
 ~~~
 [database]
 connection = mysql+pymysql://glance:GLANCE_DBPASS@controller/glance
@@ -491,7 +515,7 @@ service glance-registry restart
 service glance-api restart
 ~~~
 
-###  [Verificando Operação](https://docs.openstack.org/glance/queens/install/verify.html)
+####  [Verificando Operação](https://docs.openstack.org/glance/queens/install/verify.html)
 Download da imagem [CirrOs](http://launchpad.net/cirros)
 ~~~
 wget http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
@@ -507,10 +531,9 @@ Confirmação do Upload da imagem
 openstack image list
 ~~~
 
-# [Serviço de Compute](https://docs.openstack.org/nova/queens/install/)
-### Instalação e configurações
-
->>Execute os comandos abaixo no **controller**.  
+## [Serviço de Compute](https://docs.openstack.org/nova/queens/install/)
+#### Instalação e configurações
+>>Execute os comandos abaixo no **controller**  
 ~~~
 mysql -u root -psenha
 CREATE DATABASE nova_api;
@@ -541,12 +564,12 @@ openstack endpoint create --region RegionOne placement internal http://localhost
 openstack endpoint create --region RegionOne placement admin http://localhost:8778
 ~~~
 
-### Instale e configure componentes
+#### Instale e configure componentes
 ~~~
 apt -y install nova-api nova-conductor nova-consoleauth nova-novncproxy nova-scheduler nova-placement-api
 ~~~
 
-Edite o arquivo /etc/nova/nova.conf 
+Edite o arquivo `/etc/nova/nova.conf` 
 ~~~
 [api_database]
 connection = mysql+pymysql://nova:NOVA_DBPASS@controller/nova_api
@@ -596,7 +619,7 @@ password = PLACEMENT_PASS
 ~~~
 >> Comente ou remova demais opções em [keystone_authtoken]  
 
-Execute o comando
+Execute os comandos
 ~~~
 su -s /bin/sh -c "nova-manage api_db sync" nova
 su -s /bin/sh -c "nova-manage cell_v2 map_cell0" nova
@@ -613,16 +636,14 @@ service nova-scheduler restart
 service nova-conductor restart
 service nova-novncproxy restart
 ~~~
-
-### Instale e configure no Compute  
->>Execute os comandos abaixo no **compute**.
-
+ 
 #### Instale e configure os componentes
+>>Execute os comandos abaixo no **compute**.
 ~~~
 apt install nova-compute
 ~~~
 
-Edite o arquivo etc/nova/nova.conf
+Edite o arquivo `etc/nova/nova.conf`
 ~~~
 sudo vim etc/nova/nova.conf
 ~~~
@@ -677,7 +698,7 @@ Finalize a instalação
 egrep -c '(vmx|svm)' /proc/cpuinfo
 ~~~
 
-Edite o arquivo /etc/nova/nova-compute.conf
+Edite o arquivo `/etc/nova/nova-compute.conf`
 ~~~
 sudo vim /etc/nova/nova-compute.conf
 ~~~
@@ -695,7 +716,6 @@ service nova-compute restart
 #### Adicione a máquina Compute para o banco de dados do cell
 >>Execute os comandos abaixo no **controller**.
 ~~~
-. admin-openrc
 openstack compute service list --service nova-compute
 su -s /bin/sh -c "nova-manage cell_v2 discover_hosts --verbose" nova
 ~~~
@@ -729,17 +749,17 @@ openstack endpoint create --region RegionOne network admin http://controller:969
 
 #### Configurar opções de Redes
 Para configuração de rede existe duas opções que permites configurar para serviços específicos:   
-- Redes de Provedores
-- Redes de Autoatendimento
+- Rede 1: Redes de Provedores
+- Rede 2: Redes de Autoatendimento
 
 ### Rede 1: [Redes de Provedores](https://docs.openstack.org/neutron/queens/install/controller-install-option1-ubuntu.html)
 #### Instalação de componentes
-Instale e configure os componentes da rede no **controller**.
+>>Execute os comandos abaixo no **compute**.
 ~~~
 apt install neutron-server neutron-plugin-ml2 neutron-linuxbridge-agent neutron-dhcp-agent neutron-metadata-agent
 ~~~
 
-Edite o arquivo /etc/neutron/neutron.conf 
+Edite o arquivo `/etc/neutron/neutron.conf` 
 ~~~
 sudo vim /etc/neutron/neutron.conf 
 ~~~
@@ -780,7 +800,7 @@ password = NOVA_PASS
 >> Comente ou remova demais opções da seção [keystone_authtoken]  
 
 #### Configure o Plug-in modeular Layer 2 (ML2)
-Edite o arquivo /etc/neutron/plugins/ml2/ml2_conf.ini
+Edite o arquivo `/etc/neutron/plugins/ml2/ml2_conf.ini`
 ~~~
 sudo vim /etc/neutron/plugins/ml2/ml2_conf.ini
 ~~~
@@ -797,7 +817,7 @@ enable_ipset = true
 ~~~
 
 #### Configure o Bridge do Linux
-Edite o arquivo /etc/neutron/plugins/ml2/linuxbridge_agent.ini
+Edite o arquivo `/etc/neutron/plugins/ml2/linuxbridge_agent.ini`
 ~~~
 sudo vim /etc/neutron/plugins/ml2/linuxbridge_agent.ini
 ~~~
@@ -822,7 +842,7 @@ net.bridge.bridge-nf-chamada-ip6tables
 
 #### Configurar o agente DHCP
 
-Edite o arquivo /etc/neutron/dhcp_agent.ini
+Edite o arquivo `/etc/neutron/dhcp_agent.ini`
 ~~~
 sudo vim /etc/neutron/dhcp_agent.ini
 ~~~
@@ -836,12 +856,12 @@ enable_isolated_metadata = true
 
 ### Rede 2: [Redes de Autoatendimento](https://docs.openstack.org/neutron/queens/install/controller-install-option2-ubuntu.html)
 #### Instalação de componentes
-Instale e configure os componentes da rede no **controller**.
+>>Execute os comandos abaixo no **controller**.
 ~~~
 apt install neutron-server neutron-plugin-ml2 neutron-linuxbridge-agent neutron-l3-agent neutron-dhcp-agent neutron-metadata-agent
 ~~~
 
-Edite o arquivo /etc/neutron/neutron.conf 
+Edite o arquivo `/etc/neutron/neutron.conf` 
 ~~~
 sudo vim /etc/neutron/neutron.conf 
 ~~~
@@ -884,7 +904,8 @@ password = NOVA_PASS
 >> Comente ou remova demais opções da seção [keystone_authtoken]  
 
 #### Configure o Plug-in modeular Layer 2 (ML2)
-Edite o arquivo /etc/neutron/plugins/ml2/ml2_conf.ini
+
+Edite o arquivo `/etc/neutron/plugins/ml2/ml2_conf.ini`
 ~~~
 sudo vim /etc/neutron/plugins/ml2/ml2_conf.ini
 ~~~
@@ -908,7 +929,7 @@ enable_ipset = true
 
 #### Configure o Bridge do Linux 
 
-Edite o arquivo /etc/neutron/plugins/ml2/linuxbridge_agent.ini
+Edite o arquivo `/etc/neutron/plugins/ml2/linuxbridge_agent.ini`
 ~~~
 sudo vim /etc/neutron/plugins/ml2/linuxbridge_agent.ini
 ~~~
@@ -934,7 +955,8 @@ net.bridge.bridge-nf-chamada-ip6tables
 ~~~
 
 #### Configure o layer-3
-Edite o arquivo /etc/neutron/l3_agent.ini
+
+Edite o arquivo `/etc/neutron/l3_agent.ini`
 ~~~
 sudo vim /etc/neutron/l3_agent.ini
 ~~~
@@ -946,7 +968,7 @@ interface_driver = linuxbridge
 
 #### Configure o agente DHCP
 
-Edite o arquivo /etc/neutron/dhcp_agent.ini
+Edite o arquivo `/etc/neutron/dhcp_agent.ini`
 ~~~
 sudo vim /etc/neutron/dhcp_agent.ini
 ~~~
@@ -958,8 +980,9 @@ dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
 enable_isolated_metadata = true
 ~~~
 
-#### configure o agente de metadados 
-Edite o arquivo /etc/neutron/metadata_agent.ini 
+#### Configure o agente de metadados 
+
+Edite o arquivo `/etc/neutron/metadata_agent.ini` 
 ~~~
 sudo vim /etc/neutron/metadata_agent.ini
 ~~~
@@ -972,7 +995,7 @@ metadata_proxy_shared_secret = METADATA_SECRET
 
 
 #### Configure o serviço do Compute para usar o serviço de rede
-Edite o arquivo /etc/nova/nova.conf
+Edite o arquivo `/etc/nova/nova.conf`
 ~~~
 sudo vim /etc/nova/nova.conf
 ~~~
@@ -1003,8 +1026,7 @@ Reinicie o serviço da Compute API:
 service nova-api restart
 ~~~
 
-Reinicie os serviços de rede.  
-Para ambas as opções de rede:  
+Reinicie os serviços de rede, para ambas as opções de rede (Rede 1 ou Rede 2):  
 ~~~
 service neutron-server restart
 service neutron-linuxbridge-agent restart
@@ -1012,7 +1034,7 @@ service neutron-dhcp-agent restart
 service neutron-metadata-agent restart
 ~~~
 
-Para a opção de rede 2, reinicie também o serviço de camada 3:  
+Para a opção de Rede 2, reinicie também o serviço de camada 3:  
 ~~~
 service neutron-l3-agent restart
 ~~~
@@ -1027,7 +1049,7 @@ Instale o dashboard
 apt install openstack-dashboard
 ~~~
 
-Edite o arquivo /etc/openstack-dashboard/local_settings.py
+Edite o arquivo `/etc/openstack-dashboard/local_settings.py`
 ~~~
 sudo vim /etc/openstack-dashboard/local_settings.py
 ~~~
@@ -1082,10 +1104,11 @@ OPENSTACK_NEUTRON_NETWORK = {
 TIME_ZONE = "TIME_ZONE"
 ~~~
 
-Edite o arquivo /etc/apache2/conf-available/openstack-dashboard.conf
+Edite o arquivo `/etc/apache2/conf-available/openstack-dashboard.conf`
 ~~~
 sudo vim /etc/apache2/conf-available/openstack-dashboard.conf 
 ~~~
+
 Inclua a seguinte linha
 ~~~
 WSGIApplicationGroup %{GLOBAL}
@@ -1095,10 +1118,10 @@ WSGIApplicationGroup %{GLOBAL}
 service apache2 reload
 
 ### [Verificando Operação](https://docs.openstack.org/horizon/queens/install/verify-ubuntu.html)
-Acesse o painel usando um navegador Web em http://controller/horizon.
+Acesse o painel usando um navegador Web em http://controller/horizon
 Acesse usando **admin** ou **demo user** e credenciais **default** de domínio.
 
-## [Serviço de Armazenamento de Bloco](https://docs.openstack.org/cinder/queens/install/)
+### [Serviço de Armazenamento de Bloco](https://docs.openstack.org/cinder/queens/install/)
 #### Instalação e configuração
 >> Execute estas etapas no nó de armazenamento (**Block**).  
 
@@ -1106,13 +1129,13 @@ Acesse usando **admin** ou **demo user** e credenciais **default** de domínio.
 apt install lvm2 thin-provisioning-tools
 ~~~
 
-Crie o volume /dev/sdb:
+Crie o volume `/dev/sdb`
 ~~~
 pvcreate /dev/sdb
 vgcreate cinder-volumes /dev/sdb
 ~~~
 
-Edite o arquivo /etc/lvm/lvm.conf 
+Edite o arquivo `/etc/lvm/lvm.conf` 
 ~~~
 sudo vim /etc/lvm/lvm.conf 
 ~~~
@@ -1127,7 +1150,7 @@ Instale e configure os componentes da rede no **Block**.
 apt install cinder-volume
 ~~~
 
-Edite o arquivo /etc/cinder/cinder.conf 
+Edite o arquivo `/etc/cinder/cinder.conf` 
 ~~~
 sudo vim /etc/cinder/cinder.conf 
 ~~~
@@ -1170,7 +1193,7 @@ service tgt restart
 service cinder-volume restart
 ~~~
 
-## [Instale e configure os componentes - Máquina Controller](https://docs.openstack.org/cinder/queens/install/cinder-controller-install-ubuntu.html)
+### [Instale e configure os componentes - Máquina Controller](https://docs.openstack.org/cinder/queens/install/cinder-controller-install-ubuntu.html)
 Instale e configure os componentes da rede no **Controller**.  
 ~~~
 mysql -u root -psenha
@@ -1202,7 +1225,7 @@ openstack endpoint create --region RegionOne volumev3 admin http://controller:87
 apt install cinder-api cinder-scheduler
 ~~~
 
-Edite o arquivo /etc/cinder/cinder.conf
+Edite o arquivo `/etc/cinder/cinder.conf`
 ~~~
 sudo vim /etc/cinder/cinder.conf
 ~~~
@@ -1236,7 +1259,7 @@ su -s /bin/sh -c "cinder-manage db sync" cinder
 ~~~
 
 #### Configure compute para usar o armazenamento em Bloco
-Edite o arquivo etc/nova/nova.conf
+Edite o arquivo `etc/nova/nova.conf`
 ~~~
 sudo vim etc/nova/nova.conf
 ~~~
@@ -1259,7 +1282,7 @@ Instale e configure os componentes da rede no **Block**.
 apt install cinder-backup
 ~~~
 
-Edite o arquivo  /etc/cinder/cinder.conf 
+Edite o arquivo  `/etc/cinder/cinder.conf` 
 ~~~
 sudo vim  /etc/cinder/cinder.conf 
 ~~~
@@ -1282,6 +1305,5 @@ service cinder-backup restart
 ### [Verificando Openração Cinder](https://docs.openstack.org/cinder/queens/install/cinder-verify.html)
 Verificando a operação do serviço de armazenamento em bloco.  
 ~~~
-. admin-openrc
 openstack volume service list
 ~~~
