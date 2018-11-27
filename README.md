@@ -1,11 +1,11 @@
-Instalação do OpenStack
+# Instalação do OpenStack
  Este documento apresenta os links conforme foi implementado passo a passo a instalação do **Openstack Ironic** e **Openstack Kolla-Ansible**.
 
-###Guia de Instalação do OpenStack
+### Guia de Instalação do OpenStack
 Toda documentação foi feita apartir do Guia de Instalação, a versão utilizada foi a  [**queens**](https://www.openstack.org/software/queens/).  
 Guia instalação: https://docs.openstack.org/install-guide/  
 
-##Máquina Servidor
+## Máquina Servidor
 Para instalação de Openstack, foi utilizado um servidor com as seguintes configurações:  
 **Configurações de Hardware**:  
 Processador: 8 Nucleos; Memória: 16 GB; HD: 1TB.  
@@ -17,7 +17,7 @@ Programas utilizados: VirtualBox - Versão 5.2.22 r126460 (Qt5.6.1).
 
 *Toda instalação de ambiente foi através de acesso SSH -X*.
 
-##[Ambientes criados no VirtualBox/Vagrant](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md)
+## [Ambientes criados no VirtualBox/Vagrant](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md)
 Para ambos situações de criações de VMs, utilizando o [**VAGRANT**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md) ou o [**VIRTUALBOX**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md), basta acessar o link e seguir os passos apresentados:
 
 **Controller**
@@ -25,8 +25,8 @@ Config: Memória: 10240 mb, Proc: 4 Nucleos, HD: 40GB, Placa de Rede 1: host-onl
 **Compute/Block**
 Config: Memória: 10240 mb, Proc: 4 Nucleos, HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
 
-##Configuração de Rede do Ambiente
-###[Controller](https://docs.openstack.org/install-guide/environment-networking-controller.html)
+## Configuração de Rede do Ambiente
+### [Controller](https://docs.openstack.org/install-guide/environment-networking-controller.html)
 
 Configuração de interface da *máquina controller*.  
         IP address: 10.0.0.11  
@@ -59,7 +59,7 @@ block1
 10.0.0.41       block1
 ~~~
 
-###[Compute](https://docs.openstack.org/install-guide/environment-networking-compute.html)
+### [Compute](https://docs.openstack.org/install-guide/environment-networking-compute.html)
 
 Configuração de interface da *máquina compute* 
         IP address: 10.0.0.31
@@ -92,21 +92,21 @@ block1
 10.0.0.41       block1
 ~~~
 
-###[Block](https://docs.openstack.org/install-guide/environment-networking-storage-cinder.html)
+### [Block](https://docs.openstack.org/install-guide/environment-networking-storage-cinder.html)
 Configuração de interface da máquina **Block**  
 >>*Mesmos passos anteriores, alterando apenas o valor final do endereço IP para o valor 41* 
 
-##[Verificação de Connectiividade](https://docs.openstack.org/install-guide/environment-networking-verify.html)
+## [Verificação de Connectiividade](https://docs.openstack.org/install-guide/environment-networking-verify.html)
 ~~~
 ping -c 4 controller  
 ping -c 4 compute1  
 ping -c 4 block1  
 ~~~
 
-#[Network Time Protocol (NTP)](https://docs.openstack.org/install-guide/environment-ntp.html)
-##Instalação e Configuração de componentes
+# [Network Time Protocol (NTP)](https://docs.openstack.org/install-guide/environment-ntp.html)
+## Instalação e Configuração de componentes
 
-###[Controller](https://docs.openstack.org/install-guide/environment-ntp-controller.html)
+### [Controller](https://docs.openstack.org/install-guide/environment-ntp-controller.html)
 ~~~
 apt install chrony  
 
@@ -121,7 +121,7 @@ allow 10.0.0.0/24
 service chrony restart
 ~~~
 
-###[Outros Nós](https://docs.openstack.org/install-guide/environment-ntp-other.html)
+### [Outros Nós](https://docs.openstack.org/install-guide/environment-ntp-other.html)
 ~~~
 apt install chrony
 
@@ -132,13 +132,13 @@ service chrony restart
 
 >>Comente a linha  pool 2.debian.pool.ntp.org offline iburst  
 
-###Verificando Operação
+### Verificando Operação
 >>Execute em todas máquinas o comando
 ~~~
 chronyc sources  
 ~~~
 
-#[Instalação de Pacotes OpenStack no Ubuntu (Versão Queens)](https://docs.openstack.org/install-guide/environment-packages-ubuntu.html)
+# [Instalação de Pacotes OpenStack no Ubuntu (Versão Queens)](https://docs.openstack.org/install-guide/environment-packages-ubuntu.html)
 OpenStack Queens for Ubuntu 16.04 LTS:  
 ~~~
 echo Y|apt install software-properties-common  
@@ -151,12 +151,12 @@ apt update && apt dist-upgrade
 apt install python-openstackclient  
 ~~~
 
-#[SQL Database](https://docs.openstack.org/install-guide/environment-sql-database-ubuntu.html)
+# [SQL Database](https://docs.openstack.org/install-guide/environment-sql-database-ubuntu.html)
 
 A documentação do **Openstack Queens**, apresenta e utiliza o banco de dados MariaDB, porém para estudo foi utilizado o Mysql.  
 >>Execute os comandos que desejar (MariaDB ou Mysql) no **Controller**. 
 
-###Mariadb
+### Mariadb
 ~~~
 apt install mariadb-server python-pymysql
 ~~~
@@ -183,13 +183,13 @@ service mysql restart
 mysql_secure_installation
 ~~~
 
-###Mysql
+### Mysql
 ~~~
 apt-get install mysql-server python-pymysql
 service mysql restart
 ~~~
 
-#[Mensagem Queue](https://docs.openstack.org/install-guide/environment-messaging-ubuntu.html)
+# [Mensagem Queue](https://docs.openstack.org/install-guide/environment-messaging-ubuntu.html)
 >>Execute os comandos no **Controller**.  
 
 ~~~
@@ -200,7 +200,7 @@ rabbitmqctl add_user openstack RABBIT_PASS
 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 ~~~
 
-#[Memcached](https://docs.openstack.org/install-guide/environment-memcached.html)
+# [Memcached](https://docs.openstack.org/install-guide/environment-memcached.html)
 >>Execute os comandos no **Controller**.  
 
 ~~~
@@ -222,7 +222,7 @@ Restarte o serviço.
 service memcached restart
 ~~~
 
-#[ETCD](https://docs.openstack.org/install-guide/environment-etcd-ubuntu.html)
+# [ETCD](https://docs.openstack.org/install-guide/environment-etcd-ubuntu.html)
 ~~~
 apt install etcd
 ~~~
@@ -250,7 +250,7 @@ systemctl enable etcd
 systemctl start etcd
 ~~~
 
-#[Instalação de Serviços OpenStack](https://docs.openstack.org/install-guide/openstack-services.html)
+# [Instalação de Serviços OpenStack](https://docs.openstack.org/install-guide/openstack-services.html)
 * A seguir é apresentado os 4 principais serviços para implantação minima do Openstack na versão Queens, com mais dois serviços aconselháveis.  
 * Serviço de Identidade - instalação do **keystone**.  
 * Serviço de Imagem - instalação do **glance**   
@@ -260,7 +260,7 @@ Demais serviços:
 * Dashboard - instalação do **horizon**  
 * Serviço de armazenamento em bloco - instalação do **cinder**
 
-#[Serviço de Identidade](https://docs.openstack.org/keystone/queens/install/)
+# [Serviço de Identidade](https://docs.openstack.org/keystone/queens/install/)
 ###Tutorial de instalação do keystone
 >>Execute os comandos no **Controller**.
 acesse o banco de dados.
@@ -274,7 +274,7 @@ GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'senha';
 exit;
 ~~~
 
-###Instalar e configurar componentes
+### Instalar e configurar componentes
 ~~~
 apt install keystone  apache2 libapache2-mod-wsgi
 ~~~
@@ -307,7 +307,7 @@ keystone-manage bootstrap --bootstrap-password ADMIN_PASS \
   --bootstrap-region-id RegionOne
 ~~~
 
-###Configure o servidor Apache HTTP
+### Configure o servidor Apache HTTP
 Edite o arquivo /etc/apache2/apache2.conf
 ~~~
 sudo vim /etc/apache2/apache2.conf
@@ -333,7 +333,7 @@ export OS_AUTH_URL=http://controller:5000/v3
 export OS_IDENTITY_API_VERSION=3
 ~~~
 
-###[Criando dominio, projeto, usuario e papeis](https://docs.openstack.org/keystone/queens/install/keystone-users-ubuntu.html)
+### [Criando dominio, projeto, usuario e papeis](https://docs.openstack.org/keystone/queens/install/keystone-users-ubuntu.html)
 >>Execute os comandos abaixo no **controller**.
 ~~~
 openstack domain create --description "An Example Domain" example
@@ -344,7 +344,7 @@ openstack role create user
 openstack role add --project demo --user demo user
 ~~~
 
-###Verificando as operações
+### Verificando as operações
 ~~~
 unset OS_AUTH_URL OS_PASSWORD
 ~~~
@@ -361,7 +361,7 @@ openstack --os-auth-url http://controller:5000/v3 \
   --os-project-name demo --os-username demo token issue
 ~~~
 
-###Criando scripts do ambiente do cliente Openstack
+### Criando scripts do ambiente do cliente Openstack
 Criando os arquivos **admin-openrc** e **demon-openrc**.
 ~~~
 sudo vim admin-openrc
@@ -402,8 +402,8 @@ Utilizando os scripts
 openstack token issue
 ~~~
 
-#[Serviço de Image](https://docs.openstack.org/glance/queens/install/)
-###Instalação e Configuração
+# [Serviço de Image](https://docs.openstack.org/glance/queens/install/)
+### Instalação e Configuração
 >>Execute os comandos abaixo no **controller**.  
 
 ~~~
@@ -429,7 +429,7 @@ openstack endpoint create --region RegionOne image internal http://localhost:929
 openstack endpoint create --region RegionOne image admin http://localhost:9292
 ~~~
 
-###[Instale e configure os componentes](https://docs.openstack.org/glance/queens/install/install-ubuntu.html)
+### [Instale e configure os componentes](https://docs.openstack.org/glance/queens/install/install-ubuntu.html)
 ~~~
 apt install glance
 ~~~
@@ -491,26 +491,26 @@ service glance-registry restart
 service glance-api restart
 ~~~
 
-###[Verificando Operação](https://docs.openstack.org/glance/queens/install/verify.html)
+###  [Verificando Operação](https://docs.openstack.org/glance/queens/install/verify.html)
 Download da imagem [CirrOs](http://launchpad.net/cirros)
 ~~~
 wget http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
 ~~~
 
-Upload da imagem
+Upload da imagem  
 ~~~
 openstack image create "cirros" --file cirros-0.4.0-x86_64-disk.img --disk-format qcow2 --container-format bare --public
 ~~~
 
-Confirmação do Upload da imagem
+Confirmação do Upload da imagem  
 ~~~
 openstack image list
 ~~~
 
-#[Serviço de Compute](https://docs.openstack.org/nova/queens/install/)
-###Instalação e configurações
+# [Serviço de Compute](https://docs.openstack.org/nova/queens/install/)
+### Instalação e configurações
 
->>Execute os comandos abaixo no **controller**. 
+>>Execute os comandos abaixo no **controller**.  
 ~~~
 mysql -u root -psenha
 CREATE DATABASE nova_api;
@@ -541,7 +541,7 @@ openstack endpoint create --region RegionOne placement internal http://localhost
 openstack endpoint create --region RegionOne placement admin http://localhost:8778
 ~~~
 
-###Instale e configure componentes
+### Instale e configure componentes
 ~~~
 apt -y install nova-api nova-conductor nova-consoleauth nova-novncproxy nova-scheduler nova-placement-api
 ~~~
@@ -1121,7 +1121,7 @@ devices {
 filter = [ "a/sdb/", "r/.*/"]
 ~~~
 
-## [Instale e configure os componentes - Máquina Block](https://docs.openstack.org/cinder/queens/install/cinder-storage-install-ubuntu.html)
+### Instale e configure os componentes - Máquina Block
 Instale e configure os componentes da rede no **Block**.  
 ~~~
 apt install cinder-volume
@@ -1170,7 +1170,7 @@ service tgt restart
 service cinder-volume restart
 ~~~
 
-## [Instale e configure os componentes - Máquina Controller](https://docs.openstack.org/cinder/queens/install/cinder-storage-install-ubuntu.html)
+## [Instale e configure os componentes - Máquina Controller](https://docs.openstack.org/cinder/queens/install/cinder-controller-install-ubuntu.html)
 Instale e configure os componentes da rede no **Controller**.  
 ~~~
 mysql -u root -psenha
@@ -1197,48 +1197,91 @@ openstack endpoint create --region RegionOne volumev3 internal http://controller
 openstack endpoint create --region RegionOne volumev3 admin http://controller:8776/v3/%\(project_id\)s
 ~~~
 
-Instalação e configuração de componentes
-
+#### Instalação e configuração de componentes
 ~~~
-~~~
-~~~
-~~~
-~~~
+apt install cinder-api cinder-scheduler
 ~~~
 
+Edite o arquivo /etc/cinder/cinder.conf
+~~~
+sudo vim /etc/cinder/cinder.conf
+~~~
 
+~~~
+[database]
+connection = mysql+pymysql://cinder:CINDER_DBPASS@controller/cinder
 
+[DEFAULT]
+transport_url = rabbit://openstack:RABBIT_PASS@controller
+auth_strategy = keystone
+my_ip = 10.0.0.11
 
+[keystone_authtoken]
+auth_uri = http://controller:5000
+auth_url = http://controller:5000
+memcached_servers = controller:11211
+auth_type = password
+project_domain_id = default
+user_domain_id = default
+project_name = service
+username = cinder
+password = CINDER_PASS
 
+[oslo_concurrency]
+lock_path = /var/lib/cinder/tmp
+~~~
 
+~~~
+su -s /bin/sh -c "cinder-manage db sync" cinder
+~~~
 
+#### Configure compute para usar o armazenamento em Bloco
+Edite o arquivo etc/nova/nova.conf
+~~~
+sudo vim etc/nova/nova.conf
+~~~
 
+~~~
+[cinder]
+os_region_name = RegionOne
+~~~
 
+#### Finalize a instalação
+~~~
+service nova-api restart
+service cinder-scheduler restart
+service apache2 restart
+~~~
 
+### [Instale e configure o serviço de backup (Opcional)](https://docs.openstack.org/cinder/queens/install/cinder-backup-install-ubuntu.html)
+Instale e configure os componentes da rede no **Block**.
+~~~
+apt install cinder-backup
+~~~
 
+Edite o arquivo  /etc/cinder/cinder.conf 
+~~~
+sudo vim  /etc/cinder/cinder.conf 
+~~~
 
+~~~
+[DEFAULT]
+backup_driver = cinder.backup.drivers.swift
+backup_swift_url = SWIFT_URL
+~~~
 
+~~~
+openstack catalog show object-store
+~~~
 
+#### Finalize a instalação
+~~~
+service cinder-backup restart
+~~~
 
-#Erros e Bugs
-(Nem eu sei o que são esses Erros e Bugs)
-https://docs.openstack.org/install-guide/environment-ntp-other.html
-https://stackoverflow.com/questions/39281594/error-1698-28000-access-denied-for-user-rootlocalhost
-https://docs.openstack.org/install-guide/environment-messaging.html
-mysql -u root -p
-
-https://docs.openstack.org/install-guide/environment-messaging-ubuntu.html
-	rabbitmqctl add_user openstack RABBIT_PASS
-
-https://docs.openstack.org/install-guide/environment-etcd-ubuntu.html
-https://docs.openstack.org/install-guide/openstack-services.html
-https://docs.openstack.org/keystone/queens/install/keystone-users-ubuntu.html
-https://docs.openstack.org/keystone/queens/code_documentation.html
-
-https://docs.openstack.org/keystone/queens/install/index-ubuntu.html
-https://docs.openstack.org/keystone/queens/install/keystone-verify-ubuntu.html
-
-openstack --os-auth-url http://controller:5000/v3  --os-project-domain-name Default --os-user-domain-name Default  --os-project-name admin --os-username admin token issue
-
-openstack --os-auth-url http://controller:5000/v3 --os-project-domain-name Default --os-user-domain-name Default --os-project-name demo --os-username demo token issue
-https://docs.openstack.org/keystone/queens/install/keystone-users-ubuntu.html
+### [Verificando Openração Cinder](https://docs.openstack.org/cinder/queens/install/cinder-verify.html)
+Verificando a operação do serviço de armazenamento em bloco.  
+~~~
+. admin-openrc
+openstack volume service list
+~~~
