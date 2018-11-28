@@ -1,3 +1,4 @@
+~~~
 echo Y|apt install software-properties-common
 add-apt-repository cloud-archive:queens
 apt update && apt -y dist-upgrade
@@ -45,7 +46,7 @@ mysql -u root -psenhaDaVMdoMato
 CREATE DATABASE glance;
 GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'localhost' IDENTIFIED BY 'senhaDaVMdoMato';
 GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' IDENTIFIED BY 'senhaDaVMdoMato';
-exit
+exit;
 openstack user create --domain default --password senhaDaVMdoMato glance
 openstack service create --name glance --description "OpenStack Image" image
 openstack endpoint create --region RegionOne image public http://localhost:9292
@@ -75,7 +76,7 @@ GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY 'senhaDaVMdoM
 GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY 'senhaDaVMdoMato';
 GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'localhost' IDENTIFIED BY 'senhaDaVMdoMato';
 GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'%' IDENTIFIED BY 'senhaDaVMdoMato';
-exit
+exit;
 openstack user create --domain default --password senhaDaVMdoMato nova
 openstack role add --project service --user nova admin
 openstack service create --name nova --description "OpenStack Compute" compute
@@ -92,9 +93,6 @@ apt -y install nova-api nova-conductor nova-consoleauth nova-novncproxy nova-sch
 
 sed -i 's/connection\ \=\ sqlite\:\/\/\/\/var\/lib\/nova\/nova_api\.sqlite/connection\ \=\ mysql\+pymysql\:\/\/nova\:senhaDaVMdoMato\@localhost\/nova_api/g' /etc/nova/nova.conf 
 sed -i 's/connection\ \=\ sqlite\:\/\/\/\/var\/lib\/nova\/nova\.sqlite/connection\ \=\ mysql\+pymysql\:\/\/nova\:senhaDaVMdoMato\@localhost\/nova/g' /etc/nova/nova.conf 
-
-
-
 sed -i '/^\[DEFAULT\]/a transport_url = rabbit://openstack:senhaDaVMdoMato@localhost \nmy_ip = 127.0.0.1 \nuse_neutron = true \nfirewall_driver = nova.virt.firewall.NoopFirewallDriver' /etc/nova/nova.conf
 sed -i '/^\[api\]/a auth_strategy = keystone' /etc/nova/nova.conf
 sed -i '/^\[keystone_authtoken\]/a auth_url = http://localhost:5000/v3 \nmemcached_servers = localhost:11211 \nauth_type = password \nproject_domain_name = default \nuser_domain_name = default \nproject_name = service \nusername = nova \npassword = senhaDaVMdoMato' /etc/nova/nova.conf
@@ -539,6 +537,7 @@ service neutron-server restart
 service neutron-linuxbridge-agent restart
 service neutron-dhcp-agent restart
 service neutron-metadata-agent restart
+~~~
 
 ===================================================
 ----------Finalizando a Instalação Ironic----------
