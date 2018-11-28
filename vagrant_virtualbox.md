@@ -120,54 +120,54 @@ O Vagrant é baseado em **box** para criação de VMs, para melhor entendimento 
 ## Comandos básicos do Vagrant
 #### Box
 + Adiciona um novo box a sua lista de box
-- `vagrant box add name url`
+  - `vagrant box add name url`
 + Lista suas box para utilização
-- `vagrant box list`
+  - `vagrant box list`
 + Remove um box da lista de box
-- `vagrant box remove name`
+  - `vagrant box remove name`
 
 #### Init
 + Cria o arquivo Vagrantfile com as configurações do box que você informou no [box-name], caso você não tenha o box ainda adicionado é obrigatório passar o [box-url] para que ele possa baixa-lo
-- `vagrant init [box-name] [box-url]`
+  - `vagrant init [box-name] [box-url]`
 
 #### Up
 + Cria e inicia a instancia após o comando vagrant init
-- `vagrant up`
+  - `vagrant up`
 
 #### Reload
 + Reinicia a instancia do box ativo
-- `vagrant reload`
+  - `vagrant reload`
 
 #### Suspend
 + Stopa a instancia ativa, congelando seu estado atual
-- `vagrant suspend`
+  - `vagrant suspend`
 
 #### Resume
 + Ativa a instancia suspensa, até então, pelo comando vagrant suspend
-- `vagrant resume`
+  - `vagrant resume`
 
 #### Halt
 + Manda um comando para desligar a instancia ativa, finalizando todos os processos antes de finalizar
-- `vagrant halt`
-- `vagrant halt name_vm`
+  - `vagrant halt`
+  - `vagrant halt name_vm`
 
 #### Destroy
 + Destroy a instancia ativa
-- `vagrant destroy`
+  - `vagrant destroy`
 
 #### SSH
 + Acessa a instancia ativa via ssh
-- `vagrant ssh`
+  - `vagrant ssh`
 
 #### Status
 + Informa o status atual da instancia
-- `vagrant status`
+  - `vagrant status`
 + Informa o status atual de todas instancias (Parado, rodando, congelada, etc).
-- `vagrant global-status`
+  - `vagrant global-status`
 
 #### Global-Status --Prune 
 + Limpando VMs obsoletas
-- `vagrant global-status --prune`
+  - `vagrant global-status --prune`
 
 #### Destruir todas VMs
 ~~~
