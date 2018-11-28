@@ -17,7 +17,7 @@ Vagrant - *Versão 2.2.1*.
 ***
 
 ### [Ambientes criados no VirtualBox/Vagrant](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md)
-Para criações das VMs, utilizando [**VAGRANT**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md) ou [**VIRTUALBOX**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md), basta acessar o link e seguir os passos apresentados:
+Para criações das VMs, utilizou-se o [**VAGRANT**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md) ou [**VIRTUALBOX**](https://github.com/henriqelol/Openstack/blob/master/vagrant_virtualbox.md), para entender sua instalação, configuração e passos basta acessar o link e seguir os passos apresentados:
 
 **Configurações das VMs: Controller/Compute/Block:**  
 Processador: 4 Núcleos; Memória: 10 GB; HD: 40GB, Placa de Rede 1: host-only (vboxnet0), brigde enp10f0.  
