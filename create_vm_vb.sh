@@ -22,3 +22,4 @@ VBoxManage startvm ModelOVA --type gui
 echo "Sistema instalado"
 vboxmanage export ModelOVA -o ModelOVA.ova
 vboxmanage unregistervm ModelOVA --delete
+vboxmanage import ModelOVA.ova
