@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
         
         echo "Update do Sistema"
         bash backup/update.sh
-        
+        rm -r backup/
       SHELL
     end
 end
