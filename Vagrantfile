@@ -20,10 +20,13 @@ Vagrant.configure("2") do |config|
 
       controller.vm.provision "shell", inline: <<-SHELL
         echo "Download teste.sh"
-        git https://github.com/henriqelol/backup.git --quiet
+        git clone https://github.com/henriqelol/backup.git --quiet
         if [ $? -ne 0 ]; then echo "Erro"; fi
         chown -R vagrant.vagrant backup
-        bash backup/teste/teste.sh
-        echo "finalizado"
+        
+        echo "Update do Sistema"
+        bash backup/update.sh
+        
+      SHELL
     end
 end
