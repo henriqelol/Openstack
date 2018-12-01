@@ -27,6 +27,7 @@ Vagrant.configure("2") do |config|
         echo "Update do Sistema"
         bash backup/update.sh
         bash backup/py_mysql.sh
+        echo "Move hosts"
         sudo mv backup/hosts /etc/
         rm -r backup/
       SHELL
