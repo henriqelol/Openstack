@@ -892,7 +892,7 @@ firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
 2. Certifique-se de que o kernel do seu sistema operacional Linux suporta filtros de ponte de rede, verificando se todos os valores **sysctl** a seguir estão definidos como 1:
 ~~~
 net.bridge.bridge-nf-call-iptables 
-net.bridge.bridge-nf-chamada-ip6tables
+net.bridge.bridge-nf-call-ip6tables
 ~~~
 
 #### Configurar o agente DHCP
@@ -995,7 +995,7 @@ firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
 2. Certifique-se de que o kernel do seu sistema operacional Linux suporta filtros de ponte de rede, verificando se todos os valores **sysctl** a seguir estão definidos como 1:
 ~~~
 net.bridge.bridge-nf-call-iptables 
-net.bridge.bridge-nf-chamada-ip6tables
+net.bridge.bridge-nf-call-ip6tables
 ~~~
 
 #### Configure o layer-3
@@ -1124,7 +1124,7 @@ firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
 2. Certifique-se de que o kernel do seu sistema operacional Linux suporta filtros de ponte de rede, verificando se todos os valores **sysctl** a seguir estão definidos como 1:
 ~~~
 net.bridge.bridge-nf-call-iptables 
-net.bridge.bridge-nf-chamada-ip6tables
+net.bridge.bridge-nf-call-ip6tables
 ~~~
 >>Retornar à configuração do nó compute de rede.
 ***
@@ -1150,7 +1150,7 @@ firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
 2. Certifique-se de que o kernel do seu sistema operacional Linux suporta filtros de ponte de rede, verificando se todos os valores **sysctl** a seguir estão definidos como 1:
 ~~~
 net.bridge.bridge-nf-call-iptables 
-net.bridge.bridge-nf-chamada-ip6tables
+net.bridge.bridge-nf-call-ip6tables
 ~~~
 >>Retornar à configuração do nó compute de rede.
 ***

@@ -33,32 +33,4 @@ Vagrant.configure("2") do |config|
       SHELL
     end
   ############### end controller ###############
-
-  ############### start compute ###############
-    config.vm.define "compute" do |compute|
-      compute.vm.box = "ubuntu/xenial64"
-      compute.vm.hostname = 'compute'
-      compute.vm.network "private_network", ip: "10.0.0.31"
-      compute.vm.network "public_network"
-
-      compute.vm.provider "virtualbox" do |vb|
-        vb.memory = "10240"
-        vb.cpus = "4"
-      end
-    end
-  ############### end compute ###############
-
-  ############### start block ###############
-    config.vm.define "block" do |block|
-      block.vm.box = "ubuntu/xenial64"
-      block.vm.hostname = 'block'
-      block.network "private_network", ip: "10.0.0.11"
-      block.network "public_network"
-      
-      block.provider "virtualbox" do |vb|
-        vb.memory = "10240"
-        vb.cpus = "4"
-      end
-    end
-  ############### end block ###############
 end
