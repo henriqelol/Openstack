@@ -1,5 +1,4 @@
-echo "Neutron - Instalação e configuração do compute"
-apt -qy install neutron-linuxbridge-agent 2>> apt-neutron-compute-error.log
+apt -qy install neutron-linuxbridge-agent 2>> neutron-compute-error.log
 
 sed -i 's/^connection = sqlite:\/\/\/\/var\/lib\/neutron\/neutron.sqlite/#connection = sqlite:\/\/\/\/var\/lib\/neutron\/neutron.sqlite/' /etc/neutron/neutron.conf
 
@@ -21,7 +20,6 @@ sed -i "$[linhaauthtokenneutron+9] i\password = senhaDaVMdoMato" /etc/neutron/ne
 linhalinuxbridgeneutron=`awk '{if ($0 == "[linux_bridge]") {print NR;}}' /etc/neutron/plugins/ml2/linuxbridge_agent.ini`
 sed -i "$[linhalinuxbridgeneutron+1] i\physical_interface_mappings = provider:enp0s9" /etc/neutron/plugins/ml2/linuxbridge_agent.ini
 
-HOST_IP=$1
 linhavxlanneutron=`awk '{if ($0 == "[vxlan]") {print NR;}}' /etc/neutron/plugins/ml2/linuxbridge_agent.ini`
 sed -i "$[linhavxlanneutron+1] i\enable_vxlan = true" /etc/neutron/plugins/ml2/linuxbridge_agent.ini
 sed -i "$[linhavxlanneutron+2] i\local_ip = 10.0.0.31" /etc/neutron/plugins/ml2/linuxbridge_agent.ini
