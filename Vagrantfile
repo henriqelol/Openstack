@@ -16,9 +16,8 @@ Vagrant.configure("2") do |config|
 		        vb.cpus = "2"
 	      	end
 
-
 	      	controller.vm.provision "shell", inline: <<-SHELL
-	      		echo "Que começa a poha toda"
+	      		echo "Install Openstack Ironic"
 		SHELL
 	    end
 	############### end controller ###############
