@@ -5,7 +5,7 @@ echo Y|apt-get install software-properties-common
 
 echo Y|add-apt-repository cloud-archive:queens
 
-apt-get -qy install python-openstackclient 2>> apt-openstackclient-error.log
+apt-get -qy install python-openstackclient 2>> openstackclient-error.log
 
 echo "##Limpando sources.list"
 >/etc/apt/sources.listNOVO
