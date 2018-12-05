@@ -1,8 +1,6 @@
-~~~
 echo Y|apt install software-properties-common
-add-apt-repository cloud-archive:queens
+echo Y|add-apt-repository cloud-archive:queens
 apt update && apt -y dist-upgrade
-reboot
 echo Y|apt install python-openstackclient
 echo Y|apt-get install mysql-server
 mysql -u root -psenhaDaVMdoMato
@@ -12,6 +10,9 @@ IDENTIFIED BY 'senhaDaVMdoMato';
 GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' \
 IDENTIFIED BY 'senhaDaVMdoMato';
 exit;
+
+
+echo "install keystone apache2"
 apt -y install keystone  apache2 libapache2-mod-wsgi
 sed -i 's/connection\ \=\ sqlite\:\/\/\/\/var\/lib\/keystone\/keystone\.db/connection\ \=\ mysql\+pymysql\:\/\/keystone\:senhaDaVMdoMato\@localhost\/keystone/g' /etc/keystone/keystone.conf
 sed -i '/^\[token\]/a provider = fernet' /etc/keystone/keystone.conf
@@ -32,15 +33,22 @@ echo "export OS_USER_DOMAIN_NAME=Default" >> /etc/profile
 echo "export OS_PROJECT_DOMAIN_NAME=Default" >> /etc/profile
 echo "export OS_AUTH_URL=http://localhost:5000/v3" >> /etc/profile
 echo "export OS_IDENTITY_API_VERSION=3" >> /etc/profile
-reboot
+export OS_USERNAME=admin
+export OS_PASSWORD=senhaDaVMdoMato
+export OS_PROJECT_NAME=admin
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_AUTH_URL=http://localhost:5000/v3
+export OS_IDENTITY_API_VERSION=3
 printenv | grep OS
-#ssh -l root -p 2222 localhost
+echo "Openstack"
 openstack domain create --description "An Example Domain" example
 openstack project create --domain default --description "Service Project" service
 openstack project create --domain default --description "Demo Project" demo
 openstack user create --domain default --password senhaDaVMdoMato demo
 openstack role create user
 openstack role add --project demo --user demo user
+rm -R backup/
 
 mysql -u root -psenhaDaVMdoMato
 CREATE DATABASE glance;
@@ -118,19 +126,6 @@ service nova-scheduler restart
 service nova-conductor restart
 service nova-novncproxy restart
 
-
-apt -y install nova-compute
-sed -i '/^\[vnc\]/a novncproxy\_base\_url\ \=\ http\:\/\/localhost\:6080\/vnc\_auto\.html' /etc/nova/nova.conf
-
-sed -i 's/log_dir/#log_dir/' /etc/nova/nova.conf
-egrep -c '(vmx|svm)' /proc/cpuinfo
-
-if [ $(egrep -c '(vmx|svm)' /proc/cpuinfo) -eq 0 ]; then sed -i 's/virt_type\=kvm/virt_type\=qemu/g' /etc/nova/nova-compute.conf; fi
-service nova-compute restart
-
-Precisa criar a VM primeiro? não deu com: nova boot --flavor m1.tiny --image cirros --min-count 1 node1
-
-openstack compute service list --service nova-compute --debug
 
 ==
 https://docs.openstack.org/neutron/queens/install/install-ubuntu.html
