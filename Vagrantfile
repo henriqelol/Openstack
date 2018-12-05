@@ -17,7 +17,52 @@ Vagrant.configure("2") do |config|
 	      	end
 
 	      	controller.vm.provision "shell", inline: <<-SHELL
-	      		echo "Install Openstack Ironic"
+			sudo su	      		
+			echo "Install Openstack Ironici"
+			
+			echo "===Update do Sistema==="
+			bash /Openstack/Ironic/All/update.sh
+
+			echo "===Copiando Hosts==="
+			cp /Openstack/Ironic/All/hosts /etc/
+
+			echo "===Copiando Hosts==="
+			cp /Openstack/Ironic/All/admin-openrc /etc/
+			source /etc/admin-openrc
+
+			echo "===Copiando Demo-openrc==="
+			cp /Openstack/Ironic/All/demo-openrc /etc/
+			source /etc/demo-openrc
+
+			echo "===Instalando Chrony==="
+			bash /Openstack/Ironic/Controller/chrony.sh
+
+			echo "===Instalando PY Server e MYSQL Server==="
+			bash /Openstack/Ironic/Controller/mysql_py.sh
+
+			echo "===Instalando rabbitmq==="
+			bash /Openstack/Ironic/Controller/rabbitmq.sh
+
+			echo "===Instalando memcached==="
+			bash /Openstack/Ironic/Controller/memcached.sh
+
+			echo "===Instalando etcd==="
+			bash /Openstack/Ironic/Controller/etcd.sh
+
+			echo "===Instalando keystone==="
+			bash /Openstack/Ironic/Controller/keystone.sh
+
+			echo "===Instalando glance==="
+			bash /Openstack/Ironic/Controller/glance.sh
+
+			echo "===Instalando nova==="
+			bash /Openstack/Ironic/Controller/nova.sh
+
+			echo "===Instalando neutron==="
+			bash /Openstack/Ironic/Controller/neutron.sh
+			
+			echo "===Movendo os Logs==="
+			bash /Openstack/Ironic/Ironic/All/mv-log.sh
 		SHELL
 	    end
 	############### end controller ###############
