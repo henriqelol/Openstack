@@ -1,4 +1,3 @@
-echo "Nova"
 mysql -u root -psenhaDaVMdoMato
 CREATE DATABASE nova_api;
 CREATE DATABASE nova;
@@ -10,6 +9,7 @@ GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY 'senhaDaVMdoMato';
 GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'localhost' IDENTIFIED BY 'senhaDaVMdoMato';
 GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'%' IDENTIFIED BY 'senhaDaVMdoMato';
 exit;
+
 openstack user create --domain default --password senhaDaVMdoMato nova
 openstack role add --project service --user nova admin
 openstack service create --name nova --description "OpenStack Compute" compute
@@ -22,7 +22,8 @@ openstack service create --name placement --description "Placement API" placemen
 openstack endpoint create --region RegionOne placement public http://controller:8778
 openstack endpoint create --region RegionOne placement internal http://controller:8778
 openstack endpoint create --region RegionOne placement admin http://controller:8778
-apt -qy install nova-api nova-conductor nova-consoleauth nova-novncproxy nova-scheduler nova-placement-api
+apt -qy install nova-api nova-conductor nova-consoleauth nova-novncproxy nova-scheduler nova-placement-api 2>> nova-error.log
+
 sed -i 's/connection\ \=\ sqlite\:\/\/\/\/var\/lib\/nova\/nova_api\.sqlite/connection\ \=\ mysql\+pymysql\:\/\/nova\:senhaDaVMdoMato\@controller\/nova_api/g' /etc/nova/nova.conf 
 sed -i 's/connection\ \=\ sqlite\:\/\/\/\/var\/lib\/nova\/nova\.sqlite/connection\ \=\ mysql\+pymysql\:\/\/nova\:senhaDaVMdoMato\@controller\/nova/g' /etc/nova/nova.conf 
 sed -i '/^\[DEFAULT\]/a transport_url = rabbit://openstack:senhaDaVMdoMato@controller \nmy_ip = 10.0.0.11 \nuse_neutron = true \nfirewall_driver = nova.virt.firewall.NoopFirewallDriver' /etc/nova/nova.conf
@@ -42,7 +43,6 @@ service nova-consoleauth restart
 service nova-scheduler restart
 service nova-conductor restart
 service nova-novncproxy restart
-echo "Finish Nova"
 
 #Adicione a máquina Compute para o banco de dados do cell
 #Execute os comandos abaixo no controller.
