@@ -1,4 +1,3 @@
-echo "Neutron"
 mysql -u root -psenhaDaVMdoMato
 CREATE DATABASE neutron;
 GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY 'senhaDaVMdoMato';
@@ -13,7 +12,8 @@ openstack endpoint create --region RegionOne network internal http://controller:
 openstack endpoint create --region RegionOne network admin http://controller:9696
 
 echo "##Redes de Autoatendimento"
-apt -qy install neutron-server neutron-plugin-ml2 neutron-linuxbridge-agent neutron-l3-agent neutron-dhcp-agent neutron-metadata-agent 2>> apt-neutron-error.log
+apt -qy install neutron-server neutron-plugin-ml2 neutron-linuxbridge-agent neutron-l3-agent neutron-dhcp-agent neutron-metadata-agent 2>> neutron-error.log
+
 sed -i 's/sqlite:\/\/\/\/var\/lib\/neutron\/neutron.sqlite/mysql+pymysql:\/\/neutron:senhaDaVMdoMato@controller\/neutron/' /etc/neutron/neutron.conf
 linhadefaultneutron=`awk '{if ($0 == "[DEFAULT]") {print NR;}}' /etc/neutron/neutron.conf`
 sed -i "$[linhadefaultneutron+2] i\service_plugins = router" /etc/neutron/neutron.conf
@@ -86,8 +86,9 @@ sed -i "$[linhaneutronnova+8] i\username = neutron" /etc/nova/nova.conf
 sed -i "$[linhaneutronnova+9] i\password = senhaDaVMdoMato" /etc/nova/nova.conf
 sed -i "$[linhaneutronnova+10] i\service_metadata_proxy = true" /etc/nova/nova.conf
 sed -i "$[linhaneutronnova+11] i\metadata_proxy_shared_secret = senhaDaVMdoMato" /etc/nova/nova.conf
-echo "Fim X"
-su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron >> neutron-db-manage.log 2>> neutron-db-manage-error.log
+
+su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron 2>> neutron-db-manage-error.log
+
 service nova-api restart
 service neutron-server restart
 service neutron-linuxbridge-agent restart
