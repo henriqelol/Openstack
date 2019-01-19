@@ -6,4 +6,4 @@ sed -i 's/= 100$/= 4096/' /etc/mysql/mysql.conf.d/mysqld.cnf
 service mysql restart
 
 mysql -u root -psenhaDaVMdoMato
-exit;
+exit
