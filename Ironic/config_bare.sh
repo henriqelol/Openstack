@@ -1,0 +1,39 @@
+#https://docs.openstack.org/ironic/queens/install/enrollment.html
+echo "Você alterou os dados de configuração da Maquina Bare Metal (/Openstack/Ironic/config_bare.sh) ?"
+read -n1 -r -p "Pressione S para continuar" S
+export IRONIC_API_VERSION=1.11
+export OS_BAREMETAL_API_VERSION=1.11
+export NOME_UUID=
+export USER=
+export PASS=
+export ADDRESS=
+export PORT_NUMBER=
+export DEPLOY_VMLINUZ_UUID=
+export DEPLOY_INITRD_UUID=
+export PROVISION_UUID_OR_NAME=
+export CLEAN_UUID_OR_NAME=
+export MAC_ADDRESS=
+export DRIVER=
+export CLASS_NAME=
+export DISK_GB=
+export CPU_COUNT=
+export RAM_MB=
+export ARCH=
+echo "export IRONIC_API_VERSION=1.11" >> /etc/bash.bashrc
+echo "export OS_BAREMETAL_API_VERSION=1.11" >> /etc/bash.bashrc
+echo "export NOME_UUID= " >> /etc/bash.bashrc
+echo "export USER= " >> /etc/bash.bashrc
+echo "export PASS= " >> /etc/bash.bashrc
+echo "export ADDRESS= " >> /etc/bash.bashrc
+echo "export PORT_NUMBER= " >> /etc/bash.bashrc
+echo "export DEPLOY_VMLINUZ_UUID= " >> /etc/bash.bashrc
+echo "export DEPLOY_INITRD_UUID= " >> /etc/bash.bashrc
+echo "export PROVISION_UUID_OR_NAME= " >> /etc/bash.bashrc
+echo "export CLEAN_UUID_OR_NAME= " >> /etc/bash.bashrc
+echo "export MAC_ADDRESS= " >> /etc/bash.bashrc
+echo "export DRIVER= " >> /etc/bash.bashrc
+echo "export CLASS_NAME= " >> /etc/bash.bashrc
+echo "export DISK_GB= " >> /etc/bash.bashrc
+echo "export CPU_COUNT= " >> /etc/bash.bashrc
+echo "export RAM_MB= " >> /etc/bash.bashrc
+echo "export ARCH= " >> /etc/bash.bashrc
