@@ -12,3 +12,9 @@ else
 	which vagrant
 fi
 echo "Vagrant Instalado com sucesso!!"
+
+#echo "Vagrant Instalado com sucesso!!"
+#	if [ $(vagrant -v) -eq 0 ]
+#	then
+#	    echo "sucesso"
+#	fi

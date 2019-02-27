@@ -1,3 +1,7 @@
+echo "Atualizar o Sistema ? [S][N]"
+read att
+if [[ "$att" == "S" ]];then
+	
 apt -y remove virtualbox-\* 2>> rm-vb_vms.log && apt -y purge virtualbox-\* 2>> pg-vb_vms.log
 
 rm ~/"VirtualBox VMs" -Rf 2>> rm-vb_vms.log && rm ~/.config/VirtualBox/ -Rf 2>> rm-vb_config.log 
